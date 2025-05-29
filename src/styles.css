@@ -1,0 +1,518 @@
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.error-message {
+  color: #d9534f;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #0275d8;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #025aa5;
+}
+
+.btn-primary:disabled {
+  background-color: #7caedd;
+  cursor: not-allowed;
+}
+
+.submitted-data {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Formik Complex Form Styles */
+.formik-complex-form {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.formik-complex-form h2 {
+  color: #5d6d7e;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.formik-complex-form h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.formik-complex-form > div > div {
+  margin-bottom: 15px;
+}
+
+.formik-complex-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.formik-complex-form input[type="text"],
+.formik-complex-form input[type="email"],
+.formik-complex-form input[type="password"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.formik-complex-form input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.formik-complex-form button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.formik-complex-form button:hover {
+  background-color: #2980b9;
+}
+
+.formik-complex-form button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.formik-complex-form form {
+  margin-bottom: 20px;
+}
+
+.formik-complex-form ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.formik-complex-form code {
+  background-color: #f8f9fa;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+.formik-complex-form fieldset {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.formik-complex-form fieldset legend {
+  padding: 0 10px;
+  font-weight: bold;
+  color: #3498db;
+}
+
+.promise-result {
+  background-color: #e8f4f8;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+  border-left: 4px solid #3498db;
+}
+
+/* New styles for the toggle and legacy example */
+.toggle-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.toggle-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.toggle-button:hover {
+  background-color: #5a6268;
+}
+
+/* For backwards compatibility until all references are updated */
+.legacy-formik-example {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.legacy-formik-example h2 {
+  color: #5d6d7e;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.legacy-formik-example h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.legacy-formik-example > div > div {
+  margin-bottom: 15px;
+}
+
+.legacy-formik-example label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.legacy-formik-example input[type="text"],
+.legacy-formik-example input[type="email"],
+.legacy-formik-example input[type="password"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.legacy-formik-example input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.legacy-formik-example button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.legacy-formik-example button:hover {
+  background-color: #2980b9;
+}
+
+.legacy-formik-example button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.legacy-formik-example fieldset {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.legacy-formik-example fieldset legend {
+  padding: 0 10px;
+  font-weight: bold;
+  color: #3498db;
+}
+
+/* Add navigation styles */
+.navigation {
+  background-color: #2c3e50;
+  padding: 1rem;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+  background-color: #3498db;
+}
+
+.content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+/* React Router Example Styles */
+.home-container {
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.router-features {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.router-features h2 {
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.router-features ul {
+  line-height: 1.8;
+}
+
+.router-info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.info-box {
+  background-color: #e8f4f8;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3498db;
+}
+
+.parameter-example {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.parameter-example h2 {
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.no-match {
+  text-align: center;
+  padding: 40px;
+  background-color: #fff3cd;
+  border-radius: 8px;
+  color: #856404;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.no-match code {
+  background-color: #fff;
+  padding: 3px 5px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.no-match a {
+  display: inline-block;
+  margin-top: 20px;
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.no-match a:hover {
+  background-color: #2980b9;
+}
+
+/* Action Example and Children Example Styles */
+.action-example, 
+.children-example {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.action-example h2,
+.children-example h2 {
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.example-links {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.example-content {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.active-route {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #28a745;
+  transition: all 0.3s ease;
+}
+
+.inactive-route {
+  background-color: #f8f9fa;
+  color: #818182;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+/* Static Context Example Styles */
+.static-context-example {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.static-context-example h2 {
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.example-code {
+  margin: 20px 0;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 15px;
+  overflow-x: auto;
+}
+
+.example-code pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+} 
