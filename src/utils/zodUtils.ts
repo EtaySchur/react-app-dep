@@ -26,7 +26,7 @@ export type ExampleFormType = {
   phone?: string;
 };
 
-export type TransformedFormType = objectUtil.addQuestionMarks<ExampleFormType>;
+export type TransformedFormType = objectUtil.addQuestionMarks<ExampleFormType, objectUtil.requiredKeys<ExampleFormType>>;
 
 // Simple demo
 export const demonstrateAddQuestionMarks = (): TransformedFormType => {
