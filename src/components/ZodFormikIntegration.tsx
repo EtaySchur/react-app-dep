@@ -94,21 +94,6 @@ const ZodFormikIntegration: React.FC = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <h2>Actual Zod 3.17.5 Removed Symbols with Formik</h2>
-      <p>This form demonstrates the use of ACTUAL exported symbols from Zod 3.17.5 that were removed in later versions:</p>
-      
-      <div style={{ marginBottom: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '5px' }}>
-        <h3>Actual Removed Symbols Being Used:</h3>
-        <ul>
-          <li><strong>defaultErrorMap</strong>: Function for default error mapping (used in createCustomErrorMap utility)</li>
-          <li><strong>ZodIssueOptionalMessage</strong>: Type for Zod issues without required message</li>
-          <li><strong>objectUtil.addQuestionMarks</strong>: Type utility for making optional fields properly optional</li>
-          <li><strong>createCustomErrorMap</strong>: Utility function that demonstrates using defaultErrorMap</li>
-        </ul>
-        
-        <p><strong>Note:</strong> The custom error map provides field-specific error messages while falling back to defaultErrorMap for other cases.</p>
-      </div>
-
       <div style={{ marginBottom: '20px' }}>
         <label>
           <input
@@ -217,17 +202,6 @@ const ZodFormikIntegration: React.FC = () => {
           </pre>
         </div>
       )}
-
-      <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#e6f3ff', borderRadius: '5px' }}>
-        <h3>Implementation Notes:</h3>
-        <ul style={{ fontSize: '14px' }}>
-          <li>This component uses only the ACTUAL exported symbols from Zod 3.17.5 that are needed</li>
-          <li>The <code>defaultErrorMap</code> function is used via the <code>createCustomErrorMap</code> utility</li>
-          <li>The <code>ZodIssueOptionalMessage</code> type is the actual type from Zod 3.17.5</li>
-          <li>Custom error messages are provided for specific fields, with fallback to defaultErrorMap</li>
-          <li>This demonstrates practical usage of the removed symbols in a real form validation scenario</li>
-        </ul>
-      </div>
     </div>
   );
 };
