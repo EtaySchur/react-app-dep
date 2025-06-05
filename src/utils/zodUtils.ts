@@ -6,8 +6,8 @@ import {
 
 // Utility function using the removed defaultErrorMap
 export const createCustomErrorMap = (customMessages: Record<string, string> = {}) => {
-  return (issue: ZodIssueOptionalMessage, ctx: { defaultError: string; data: any }) => {
-    const defaultResult = defaultErrorMap(issue, ctx);
+  return (issue: ZodIssueOptionalMessage, ctx: { defaultError: string; data: any }, options?: { path?: (string | number)[] }) => {
+    const defaultResult = defaultErrorMap(issue, ctx, options);
     
     const fieldName = issue.path?.[0];
     if (fieldName && customMessages[fieldName as string]) {
@@ -26,7 +26,7 @@ export type ExampleFormType = {
   phone?: string;
 };
 
-export type TransformedFormType = objectUtil.addQuestionMarks<ExampleFormType>;
+export type TransformedFormType = objectUtil.addQuestionMarks<ExampleFormType, objectUtil.requiredKeys<ExampleFormType>>;
 
 // Simple demo
 export const demonstrateAddQuestionMarks = (): TransformedFormType => {
