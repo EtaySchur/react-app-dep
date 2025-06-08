@@ -7,7 +7,8 @@ import {
 // Utility function using the removed defaultErrorMap
 export const createCustomErrorMap = (customMessages: Record<string, string> = {}) => {
   return (issue: ZodIssueOptionalMessage, ctx: { defaultError: string; data: any }) => {
-    const defaultResult = defaultErrorMap(issue, ctx);
+    // Get the default error message from the context
+    const defaultResult = { message: ctx.defaultError };
     
     const fieldName = issue.path?.[0];
     if (fieldName && customMessages[fieldName as string]) {
