@@ -9,8 +9,7 @@
     "find-package-usage": "ts-node src/findPackageUsage.ts",
     "find-symbol-usage": "ts-node src/findSymbolUsage.ts",
     "analyze-symbol-ast": "ts-node src/analyzeSymbolAst.ts",
-    "test": "karma start",
-    "test:single": "karma start --single-run"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -42,16 +41,10 @@
     "@types/react": "^16.14.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^4.3.1",
-    "@types/jasmine": "^3.10.0",
     "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
-    "jasmine-core": "^3.99.0",
     "karma": "5.0.0",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^4.0.0",
-    "karma-sourcemap-loader": "^0.3.8",
-    "karma-webpack": "^4.0.2",
     "style-loader": "^4.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
