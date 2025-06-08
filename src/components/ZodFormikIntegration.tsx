@@ -22,7 +22,7 @@ interface ExtendedFormValues {
 const baseSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email format"),
-  age: z.number().min(18, "Must be at least 18 years old").optional()
+  age: z.number().min(18, "Must be at least 18 years old").optional(),
 });
 
 const extendedSchema = z.object({
