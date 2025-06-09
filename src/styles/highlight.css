@@ -1,0 +1,272 @@
+.highlight-demo {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.highlight-demo h2 {
+  color: #333;
+  border-bottom: 2px solid #007acc;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+.highlight-demo h3 {
+  color: #555;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.controls {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-group label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.control-group select {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+}
+
+.control-group input[type="checkbox"] {
+  margin-right: 5px;
+  transform: scale(1.2);
+}
+
+.sample-codes {
+  margin-bottom: 30px;
+}
+
+.sample-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sample-buttons button {
+  padding: 10px 16px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.sample-buttons button:hover {
+  background-color: #0056b3;
+}
+
+.code-input textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  background-color: #f8f9fa;
+}
+
+.highlight-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.highlight-info {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  background-color: #f1f3f4;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.highlight-info span {
+  padding: 4px 8px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.highlight-container {
+  margin: 0;
+  padding: 20px;
+  background-color: #fafafa;
+  overflow-x: auto;
+}
+
+.highlight-container code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  display: block;
+  padding: 0;
+  background: none;
+}
+
+.mode-info, .regex-info {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background-color: #fafafa;
+}
+
+.mode-info h4, .regex-info h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.mode-info ul, .regex-info ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.mode-info li, .regex-info li {
+  margin-bottom: 5px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+}
+
+.api-usage {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.api-usage ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.api-usage li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.api-usage code {
+  background-color: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  color: #d63384;
+  font-weight: 500;
+}
+
+/* Highlight.js theme overrides */
+.hljs {
+  background: #f8f8f8;
+  color: #333;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #998;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #333;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #008080;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #d14;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #900;
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #458;
+  font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #000080;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #009926;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #990073;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #0086b3;
+}
+
+.hljs-meta {
+  color: #999;
+  font-weight: bold;
+}
+
+.hljs-deletion {
+  background: #fdd;
+}
+
+.hljs-addition {
+  background: #dfd;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+} 
