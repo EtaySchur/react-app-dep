@@ -18,7 +18,8 @@ class KarmaManager {
   }
 
   startServer(): void {
-    karma.server.start(this.config, (exitCode: number) => {
+    const server = new karma.Server(this.config);
+    server.start((exitCode: number) => {
       console.log('Karma server exited with code:', exitCode);
     });
   }
