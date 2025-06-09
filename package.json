@@ -26,6 +26,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "formik": "1.5.8",
+    "highlight.js": "9.16.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
     "react-query": "^3.39.3",
@@ -37,6 +38,7 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
+    "@types/highlight.js": "^9.12.4",
     "@types/karma": "5.0.0",
     "@types/react": "^16.14.0",
     "@types/react-dom": "^16.9.0",

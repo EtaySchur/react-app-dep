@@ -12,7 +12,10 @@ import ActionExample from './components/ActionExample';
 import ChildrenExample from './components/ChildrenExample';
 import StaticContextExample from './components/StaticContextExample';
 import RoutesExample from './components/RoutesExample';
+import HighlightDemo from './components/HighlightDemo';
+import LanguageRegistration from './components/LanguageRegistration';
 import './styles.css';
+import 'highlight.js/styles/github.css';
 
 const Navigation = () => (
   <div className="navigation">
@@ -28,6 +31,13 @@ const Navigation = () => (
       <li><Link to="/children">Children Function</Link></li>
       <li><Link to="/static-context">Static Context</Link></li>
       <li><Link to="/routes">Routes Example</Link></li>
+      <li><Link to="/highlight">Highlight.js Legacy APIs</Link></li>
+      <li><Link to="/language-registration">Language Registration</Link></li>
+      <li><Link to="/comparison">API Comparison</Link></li>
+      <li><Link to="/react-query">React Query</Link></li>
+      <li><Link to="/zod">Zod</Link></li>
+      <li><Link to="/express">Express</Link></li>
+      <li><Link to="/api-test">API Test</Link></li>
     </ul>
   </div>
 );
@@ -88,6 +98,8 @@ const App = () => {
           <Route path="/children" component={ChildrenExample} />
           <Route path="/static-context" component={StaticContextExample} />
           <Route path="/routes" component={RoutesExample} />
+          <Route path="/highlight" component={HighlightDemo} />
+          <Route path="/language-registration" component={LanguageRegistration} />
           
           {/* Protected route example (v4.3.1 feature) */}
           <ProtectedRoute 
