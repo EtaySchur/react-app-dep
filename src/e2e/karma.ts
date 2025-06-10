@@ -1,7 +1,9 @@
 import * as karma from 'karma';
 
+import * as karma from 'karma';
+
 class KarmaManager {
-  private config: karma.ConfigOptions;
+  private config: karma.Config.ConfigOptions;
 
   constructor() {
     this.config = {
@@ -18,7 +20,8 @@ class KarmaManager {
   }
 
   startServer(): void {
-    karma.server.start(this.config, (exitCode: number) => {
+    const server = new karma.Server(this.config);
+    server.start().on('exit', (exitCode: number) => {
       console.log('Karma server exited with code:', exitCode);
     });
   }
