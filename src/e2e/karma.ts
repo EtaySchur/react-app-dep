@@ -17,16 +17,23 @@ class KarmaManager {
     };
   }
 
-  startServer(): void {
-    karma.server.start(this.config, (exitCode: number) => {
-      console.log('Karma server exited with code:', exitCode);
+  startServer(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const server = new karma.Server(this.config);
+      server.start().then(() => {
+        server.on('exit', (exitCode: number) => {
+          console.log('Karma server exited with code:', exitCode);
+          resolve();
+        });
+      });
     });
   }
 
   configureDartSupport(): void {
-    if (this.config.files) {
-      this.config.files.push('**/*.dart');
+    if (!this.config.files) {
+      this.config.files = [];
     }
+    this.config.files.push('**/*.dart');
   }
 }
 
