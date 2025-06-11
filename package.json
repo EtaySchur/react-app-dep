@@ -46,7 +46,7 @@
     "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
-    "karma": "5.0.0",
+    "karma": "^6.3.16",
     "style-loader": "^4.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
