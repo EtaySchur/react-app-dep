@@ -1,7 +1,7 @@
 import * as karma from 'karma';
 
 class KarmaManager {
-  private config: karma.ConfigOptions;
+  private config: ConfigOptions;
 
   constructor() {
     this.config = {
@@ -17,16 +17,19 @@ class KarmaManager {
     };
   }
 
-  startServer(): void {
-    karma.server.start(this.config, (exitCode: number) => {
+  async startServer(): Promise<void> {
+    const server = new Server(this.config);
+    await server.start();
+    server.on('exit', (exitCode: number) => {
       console.log('Karma server exited with code:', exitCode);
     });
   }
 
   configureDartSupport(): void {
-    if (this.config.files) {
-      this.config.files.push('**/*.dart');
+    if (!this.config.files) {
+      this.config.files = [];
     }
+    this.config.files.push('**/*.dart');
   }
 }
 
