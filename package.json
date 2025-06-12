@@ -24,7 +24,7 @@
   "homepage": "https://github.com/EtaySchur/ts-diff#readme",
   "description": "",
   "dependencies": {
-    "axios": "1.6.4",
+    "axios": "^1.8.2",
     "express": "^5.1.0",
     "formik": "1.5.8",
     "highlight.js": "9.16.2",
