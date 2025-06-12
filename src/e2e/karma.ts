@@ -1,8 +1,7 @@
-import * as karma from 'karma';
+const karma = require('karma');
 
 class KarmaManager {
-  private config: karma.ConfigOptions;
-
+  private config: any; 
   constructor() {
     this.config = {
       port: 9876,

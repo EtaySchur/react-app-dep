@@ -24,6 +24,7 @@
   "homepage": "https://github.com/EtaySchur/ts-diff#readme",
   "description": "",
   "dependencies": {
+    "axios": "1.6.4",
     "express": "^5.1.0",
     "formik": "1.5.8",
     "highlight.js": "9.16.2",
@@ -39,7 +40,6 @@
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
     "@types/highlight.js": "^9.12.4",
-    "@types/karma": "5.0.0",
     "@types/react": "^16.14.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^4.3.1",
