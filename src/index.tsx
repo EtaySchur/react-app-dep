@@ -15,6 +15,7 @@ import RoutesExample from './components/RoutesExample';
 import HighlightDemo from './components/HighlightDemo';
 import LanguageRegistration from './components/LanguageRegistration';
 import AgGridBreakingChangesExample from './components/AgGridBreakingChangesExample';
+import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
 import './styles.css';
 import 'highlight.js/styles/github.css';
 
@@ -35,6 +36,7 @@ const Navigation = () => (
       <li><Link to="/highlight">Highlight.js Legacy APIs</Link></li>
       <li><Link to="/language-registration">Language Registration</Link></li>
       <li><Link to="/ag-grid">AG-Grid Breaking Changes</Link></li>
+      <li><Link to="/react-hook-form">React Hook Form + Class Validator</Link></li>
       <li><Link to="/comparison">API Comparison</Link></li>
       <li><Link to="/react-query">React Query</Link></li>
       <li><Link to="/zod">Zod</Link></li>
@@ -103,6 +105,7 @@ const App = () => {
           <Route path="/highlight" component={HighlightDemo} />
           <Route path="/language-registration" component={LanguageRegistration} />
           <Route path="/ag-grid" component={AgGridBreakingChangesExample} />
+          <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
           
           {/* Protected route example (v4.3.1 feature) */}
           <ProtectedRoute 
