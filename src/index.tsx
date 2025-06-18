@@ -14,7 +14,7 @@ import StaticContextExample from './components/StaticContextExample';
 import RoutesExample from './components/RoutesExample';
 import HighlightDemo from './components/HighlightDemo';
 import LanguageRegistration from './components/LanguageRegistration';
-import AgGridBreakingChangesExample from './components/AgGridBreakingChangesExample';
+import AgGridExample from './components/AgGridExample';
 import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
 import './styles.css';
 import 'highlight.js/styles/github.css';
@@ -104,7 +104,7 @@ const App = () => {
           <Route path="/routes" component={RoutesExample} />
           <Route path="/highlight" component={HighlightDemo} />
           <Route path="/language-registration" component={LanguageRegistration} />
-          <Route path="/ag-grid" component={AgGridBreakingChangesExample} />
+          <Route path="/ag-grid" component={AgGridExample} />
           <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
           
           {/* Protected route example (v4.3.1 feature) */}

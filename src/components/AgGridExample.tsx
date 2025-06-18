@@ -5,12 +5,12 @@ import {
   ColumnApi,
   GridReadyEvent,
   ColDef,
-  AddRangeSelectionParams,  // BREAKING: Removed in v31.3.4
-  AgAngleSelect,            // BREAKING: Removed in v31.3.4
-  AgAreaSeriesOptions,      // BREAKING: Removed in v31.3.4
-  AgAxisLabelOptions,       // BREAKING: Removed in v31.3.4
-  AgAxisGridStyle,          // BREAKING: Removed in v31.3.4
-  AgAreaSeriesTooltip       // BREAKING: Removed in v31.3.4
+  AddRangeSelectionParams,
+  AgAngleSelect,
+  AgAreaSeriesOptions,
+  AgAxisLabelOptions,
+  AgAxisGridStyle,
+  AgAreaSeriesTooltip
 } from 'ag-grid-community';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -32,15 +32,13 @@ const columnDefs: ColDef[] = [
   { field: 'year', sortable: true, filter: true }
 ];
 
-const AgGridBreakingChangesExample: React.FC = () => {
+const AgGridExample: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
   const [columnApi, setColumnApi] = useState<ColumnApi | null>(null);
 
-  // BREAKING CHANGE USAGE 1: AddRangeSelectionParams interface (removed in v31.3.4)
   const handleAddRangeSelection = useCallback(() => {
     if (gridApi) {
-      // This interface will break in v31.3.4
       const rangeParams: AddRangeSelectionParams = {
         rowStart: 0,
         floatingStart: 'top',
@@ -50,19 +48,15 @@ const AgGridBreakingChangesExample: React.FC = () => {
         columnEnd: 'price'
       };
       
-      console.log('Using AddRangeSelectionParams (WILL BREAK in v31.3.4):', rangeParams);
-      // Note: The actual method might not exist, but we're testing the interface usage
+      console.log('Using AddRangeSelectionParams:', rangeParams);
     }
   }, [gridApi]);
 
-  // BREAKING CHANGE USAGE 2: AgAngleSelect class (removed in v31.3.4)
   useEffect(() => {
-    // This class will break in v31.3.4
     try {
       const angleSelect = new AgAngleSelect();
-      console.log('Created AgAngleSelect instance (WILL BREAK in v31.3.4):', angleSelect);
+      console.log('Created AgAngleSelect instance:', angleSelect);
       
-      // Use some methods that exist on this class
       angleSelect.setRadius(50);
       angleSelect.setValue(45);
       console.log('AngleSelect radius:', angleSelect.getRadius());
@@ -72,9 +66,7 @@ const AgGridBreakingChangesExample: React.FC = () => {
     }
   }, []);
 
-  // BREAKING CHANGE USAGE 3: Chart-related interfaces (removed in v31.3.4)
   const createChartConfiguration = useCallback(() => {
-    // These interfaces will break in v31.3.4
     const areaSeriesOptions: AgAreaSeriesOptions = {
       type: 'area',
       xKey: 'year',
@@ -114,7 +106,7 @@ const AgGridBreakingChangesExample: React.FC = () => {
       format: 'currency'
     };
 
-    console.log('Chart configuration using BREAKING interfaces (WILL BREAK in v31.3.4):');
+    console.log('Chart configuration:');
     console.log('- AgAreaSeriesOptions:', areaSeriesOptions);
     console.log('- AgAxisLabelOptions:', axisLabelOptions);
     console.log('- AgAxisGridStyle:', axisGridStyle);
@@ -132,10 +124,7 @@ const AgGridBreakingChangesExample: React.FC = () => {
     setGridApi(params.api);
     setColumnApi(params.columnApi);
     
-    // Create chart configuration using breaking changes
     createChartConfiguration();
-    
-    // Test range selection with breaking interface
     handleAddRangeSelection();
   }, [createChartConfiguration, handleAddRangeSelection]);
 
@@ -161,7 +150,7 @@ const AgGridBreakingChangesExample: React.FC = () => {
             cursor: 'pointer'
           }}
         >
-          Test AddRangeSelectionParams (BREAKING)
+          Test AddRangeSelectionParams
         </button>
         
         <button 
@@ -204,4 +193,4 @@ const AgGridBreakingChangesExample: React.FC = () => {
   );
 };
 
-export default AgGridBreakingChangesExample; 
+export default AgGridExample;
