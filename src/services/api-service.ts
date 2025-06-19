@@ -85,6 +85,7 @@ const baseProgress = {
 
 const extendedProgress: AxiosProgressEvent = {
   ...baseProgress,
+  lengthComputable: true,
   rate: 1000,
   estimated: 0.5,
   upload: false,
