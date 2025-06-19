@@ -34,12 +34,14 @@ class CustomProgressEvent implements AxiosProgressEvent {
   upload?: boolean;
   download?: boolean;
   event?: any;
+  lengthComputable: boolean; // Add this property
 
   constructor(loaded: number, total?: number) {
     this.loaded = loaded;
     this.total = total;
     this.progress = total ? loaded / total : undefined;
     this.bytes = loaded;
+    this.lengthComputable = !!total; // Set to true if total is provided, false otherwise
   }
 }
 
