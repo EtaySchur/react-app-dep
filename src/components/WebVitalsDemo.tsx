@@ -7,6 +7,7 @@ interface WebVitalMetric {
   value: number;
   delta: number;
   id: string;
+  rating: 'good' | 'needs-improvement' | 'poor';
 }
 
 const WebVitalsDemo: React.FC = () => {
@@ -20,11 +21,13 @@ const WebVitalsDemo: React.FC = () => {
       setMetrics(prevMetrics => {
         // Update existing metric or add new one
         const existingIndex = prevMetrics.findIndex(m => m.name === metric.name);
+        const roundedValue = Math.round(metric.value * 100) / 100;
         const newMetric: WebVitalMetric = {
           name: metric.name,
-          value: Math.round(metric.value * 100) / 100, // Round to 2 decimal places
+          value: roundedValue, // Round to 2 decimal places
           delta: Math.round(metric.delta * 100) / 100,
-          id: metric.id
+          id: metric.id,
+          rating: getMetricRating(metric.name, roundedValue)
         };
 
         if (existingIndex >= 0) {
@@ -58,7 +61,35 @@ const WebVitalsDemo: React.FC = () => {
     }
   };
 
+  const getMetricRating = (name: string, value: number): 'good' | 'needs-improvement' | 'poor' => {
+    switch (name) {
+      case 'CLS':
+        return value <= 0.1 ? 'good' : value <= 0.25 ? 'needs-improvement' : 'poor';
+      case 'FID':
+        return value <= 100 ? 'good' : value <= 300 ? 'needs-improvement' : 'poor';
+      case 'FCP':
+        return value <= 1800 ? 'good' : value <= 3000 ? 'needs-improvement' : 'poor';
+      case 'LCP':
+        return value <= 2500 ? 'good' : value <= 4000 ? 'needs-improvement' : 'poor';
+      case 'TTFB':
+        return value <= 800 ? 'good' : value <= 1800 ? 'needs-improvement' : 'poor';
+      default:
+        return 'good';
+    }
+  };
 
+  const getRatingColor = (rating: string) => {
+    switch (rating) {
+      case 'good':
+        return '#4CAF50';
+      case 'needs-improvement':
+        return '#FF9800';
+      case 'poor':
+        return '#F44336';
+      default:
+        return '#757575';
+    }
+  };
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
@@ -95,7 +126,7 @@ const WebVitalsDemo: React.FC = () => {
                 </h4>
                 <span
                   style={{
-                    backgroundColor: '#757575',
+                    backgroundColor: getRatingColor(metric.rating),
                     color: 'white',
                     padding: '4px 8px',
                     borderRadius: '4px',
@@ -104,7 +135,7 @@ const WebVitalsDemo: React.FC = () => {
                     textTransform: 'uppercase'
                   }}
                 >
-                  METRIC
+                  {metric.rating}
                 </span>
               </div>
               
