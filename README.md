@@ -1,113 +1,176 @@
-# Formik Test Application
+# Dependency Upgrade Analyzer
 
-A simple Node.js application with a contact form built using Formik version 1.5.8.
+A comprehensive tool for analyzing dependency upgrades and detecting breaking changes in JavaScript/TypeScript projects. Features real-world examples of deprecated APIs, migration patterns, and breaking change demonstrations.
 
-## Features
+## 🎯 Purpose
 
-- React-based form handling with Formik 1.5.8
-- Form validation
-- Responsive design with Bootstrap
-- Display of submitted data
+This tool helps developers:
+- **Analyze breaking changes** before upgrading dependencies
+- **Test deprecated APIs** in controlled environments
+- **Understand migration patterns** with real-world examples
+- **Detect compatibility issues** across different package versions
 
-## Prerequisites
+## 🚀 Features
 
-- Node.js (>= 12.x)
-- npm (>= 6.x)
+### Real-World Breaking Change Examples
+- **Express 3.x → 4.x**: Demonstrates removed internal APIs (`utils.accepts`, `utils.pathRegexp`, etc.)
+- **AG Grid 28.x → 31.x**: Shows deprecated chart and selection APIs
+- **React Hook Form 6.x → 7.x**: Migration patterns for form validation
+- **Formik Legacy APIs**: Examples of deprecated patterns and modern alternatives
 
-## Installation
+### Interactive Dashboard
+- Financial data grid with deprecated AG Grid APIs
+- Form validation examples using legacy patterns
+- Real-time API testing with breaking change detection
+- Content negotiation middleware using removed Express utilities
 
-1. Clone this repository or download the source code.
-2. Navigate to the project directory.
-3. Install dependencies:
+### Analysis Tools
+- Package usage finder with AST analysis
+- Symbol usage tracking across codebases
+- Import pattern detection (ES6, CommonJS, AMD, UMD)
+- Breaking change impact assessment
+
+## 🛠 Installation
 
 ```bash
+git clone <repository-url>
+cd dependency-upgrade-analyzer
 npm install
 ```
 
-## Development
+## 🏃‍♂️ Quick Start
 
-To run the application in development mode:
-
+### Start the Development Server
 ```bash
 npm start
 ```
+Opens the React dashboard at http://localhost:8080
 
-This will start the webpack development server and open the application in your default browser.
-
-## Production Build
-
-To build the application for production:
-
+### Start the API Server
 ```bash
-npm run build
+npm run server
+```
+Starts the Express server at http://localhost:3001
+
+### Run Both Simultaneously
+```bash
+npm run dev
 ```
 
-This will create a `dist` directory with the compiled application.
+## 📊 API Endpoints
 
-## Running in Production
+### Breaking Change Demonstrations
+- `GET /api/health` - Server health with deprecated API status
+- `GET /api/deprecated-apis-demo` - Comprehensive breaking change examples
+- `GET /api/stocks` - Financial data using deprecated AG Grid patterns
 
-After building the application, you can serve it using the included Express server:
+### Real-World Data
+- `GET /api/stocks?count=50&sector=Technology` - Stock market data
+- `GET /api/users` - User management examples
+- `GET /api/analytics` - Dashboard analytics data
 
+## 🔧 Analysis Tools
+
+### Find Package Usage
 ```bash
-node server.js
+npm run find-package-usage -- <package-name> [output-file] [search-path]
 ```
 
-The application will be available at http://localhost:3000.
-
-## Form Validation
-
-The form validates the following fields:
-- First Name (required)
-- Last Name (required)
-- Email (required, must be a valid email format)
-- Phone (required, must contain 10 digits)
-- Message (optional)
-
-## Technologies Used
-
-- React
-- Formik 1.5.8
-- Express
-- Webpack
-- Babel
-- Bootstrap (CSS only) 
-
-## Utility Tools
-
-### Package Usage Finder
-
-The project includes a utility tool to find and analyze how npm packages are being used in the codebase.
-
-#### Usage
-
-To find package usage:
-
+**Examples:**
 ```bash
-npm run find-package-usage -- <package-name> [output-file] [path-to-search]
-```
-
-##### Examples:
-
-Find React usage in the current project:
-```bash
+# Analyze React usage
 npm run find-package-usage -- react
+
+# Find Express patterns with output
+npm run find-package-usage -- express analysis.json ./server
+
+# Scan Formik usage in components
+npm run find-package-usage -- formik formik-usage.json ./src/components
 ```
 
-Find Formik usage in a specific directory and save results to a file:
+### Symbol Usage Analysis
 ```bash
-npm run find-package-usage -- formik output.json ./src
+npm run find-symbol-usage -- <symbol-name> [output-file]
 ```
 
-The tool will:
-- Scan all JavaScript/TypeScript files in the specified directory
-- Find all imports of the specified package
-- Detect various import styles including:
-  - ES6 imports (`import React from 'react'`)
-  - CommonJS requires (`const React = require('react')`)
-  - Dynamic imports (`import('react')`)
-  - AMD module format (`define(['react'], function(React) { ... })`)
-  - RequireJS (`require(['react'], function(React) { ... })`)
-  - UMD patterns
-  - Global variables (`window.React`)
-- Analyze how the imported components/functions are used
-- Output the results to the console or to a specified JSON file 
+### Import Pattern Analysis
+```bash
+npm run analyze-imports -- [directory]
+```
+
+## 💥 Breaking Change Examples
+
+### Express 3.21.2 → 4.21.0
+**Removed APIs:**
+- `utils.accepts()` - Content negotiation
+- `utils.acceptsArray()` - Multiple content types
+- `utils.pathRegexp()` - Route pattern matching
+- `utils.parseParams()` - Parameter parsing
+- `express.mime` - MIME type handling
+
+**Impact:** Server crashes with `TypeError: utils.accepts is not a function`
+
+### AG Grid 28.2.1 → 31.3.4
+**Deprecated APIs:**
+- `AddRangeSelectionParams` - Range selection configuration
+- `AgAngleSelect` - Chart rotation controls
+- `AgAreaSeriesOptions` - Chart series configuration
+- `AgAxisLabelOptions` - Axis label formatting
+
+**Impact:** Chart features break, selection APIs fail
+
+## 🧪 Testing Breaking Changes
+
+1. **Install old version** of dependency
+2. **Run the examples** to see working functionality
+3. **Upgrade to new version**
+4. **Observe the crashes** and breaking changes
+5. **Use migration guides** to fix issues
+
+## 📁 Project Structure
+
+```
+dependency-upgrade-analyzer/
+├── src/
+│   ├── components/          # React components with deprecated APIs
+│   ├── utils/              # Analysis and utility tools
+│   └── examples/           # Import pattern examples
+├── server/
+│   ├── app.js              # Express server with deprecated APIs
+│   └── start.js            # Server startup script
+├── *.json                  # Breaking change analysis files
+└── package.json            # Dependency configurations
+```
+
+## 🔍 Analysis Files
+
+The project includes detailed JSON files documenting breaking changes:
+- `express_3.21.2_to_4.21.0.json` - Express upgrade analysis
+- `ag-grid-community_28.2.1_to_31.3.4.json` - AG Grid changes
+- `react-hook-form_6.15.8_to_7.0.0.json` - Form library updates
+- `zod_3.17.5_to_3.22.3.json` - Schema validation changes
+
+## 🎓 Learning Outcomes
+
+After using this tool, you'll understand:
+- **How breaking changes manifest** in real applications
+- **Why IDEs don't catch all issues** (internal APIs, runtime-only changes)
+- **Migration strategies** for major version upgrades
+- **Testing approaches** for dependency updates
+- **Impact assessment** techniques for breaking changes
+
+## 🤝 Contributing
+
+This tool is designed for educational and testing purposes. Feel free to:
+- Add more breaking change examples
+- Include additional package migrations
+- Improve analysis accuracy
+- Enhance documentation
+
+## 📝 License
+
+ISC License - See LICENSE file for details.
+
+---
+
+**⚠️ Important:** This tool intentionally uses deprecated and removed APIs to demonstrate breaking changes. Do not use these patterns in production code! 

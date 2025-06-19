@@ -16,6 +16,7 @@ import HighlightDemo from './components/HighlightDemo';
 import LanguageRegistration from './components/LanguageRegistration';
 import AgGridExample from './components/AgGridExample';
 import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
+import LiveDataExample from './components/LiveDataExample';
 import './styles.css';
 import 'highlight.js/styles/github.css';
 
@@ -37,6 +38,7 @@ const Navigation = () => (
       <li><Link to="/language-registration">Language Registration</Link></li>
       <li><Link to="/ag-grid">AG-Grid Breaking Changes</Link></li>
       <li><Link to="/react-hook-form">React Hook Form + Class Validator</Link></li>
+      <li><Link to="/live-data">Live Express API Data</Link></li>
       <li><Link to="/comparison">API Comparison</Link></li>
       <li><Link to="/react-query">React Query</Link></li>
       <li><Link to="/zod">Zod</Link></li>
@@ -106,6 +108,7 @@ const App = () => {
           <Route path="/language-registration" component={LanguageRegistration} />
           <Route path="/ag-grid" component={AgGridExample} />
           <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
+          <Route path="/live-data" component={LiveDataExample} />
           
           {/* Protected route example (v4.3.1 feature) */}
           <ProtectedRoute 
