@@ -11,9 +11,9 @@ const testAcceptsHeader = (header) => {
   return result;
 };
 
-const testAcceptsArray = (types) => {
-  const result = utils.acceptsArray(types);
-  console.log('✅ utils.acceptsArray working:', result);
+const testAcceptsArray = (req, types) => {
+  const result = req.accepts(types);
+  console.log('✅ req.accepts working:', result);
   return result;
 };
 
