@@ -24,7 +24,7 @@
   "homepage": "https://github.com/EtaySchur/ts-diff#readme",
   "description": "",
   "dependencies": {
-    "ag-grid-react": "^28.2.1",
+    "ag-grid-react": "^33.3.2",
     "axios": "1.6.4",
     "class-validator": "^0.13.2",
     "express": "4.20.0",
