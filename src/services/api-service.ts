@@ -9,7 +9,8 @@ const mockProgressEvent: AxiosProgressEvent = {
   estimated: 1,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: true
 };
 
 const createTestProgressEvent = (loaded: number, total: number): AxiosProgressEvent => ({
@@ -21,7 +22,8 @@ const createTestProgressEvent = (loaded: number, total: number): AxiosProgressEv
   estimated: (total - loaded) / 1000,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: true
 });
 
 class CustomProgressEvent implements AxiosProgressEvent {
@@ -34,16 +36,18 @@ class CustomProgressEvent implements AxiosProgressEvent {
   upload?: boolean;
   download?: boolean;
   event?: any;
+  lengthComputable: boolean; // Add this property
 
   constructor(loaded: number, total?: number) {
     this.loaded = loaded;
     this.total = total;
     this.progress = total ? loaded / total : undefined;
     this.bytes = loaded;
+    this.lengthComputable = !!total; // Set to true if total is provided, false otherwise
   }
 }
 
-function processProgress({ loaded, total, progress }: AxiosProgressEvent) {
+function processProgress({ loaded, total, progress, lengthComputable }: AxiosProgressEvent) {
   const percentage = total ? (loaded / total) * 100 : 0;
   return percentage;
 }
@@ -52,11 +56,12 @@ const fakeProgress = {
   loaded: 100,
   total: 200,
   progress: 0.5,
-  bytes: 100
+  bytes: 100,
+  lengthComputable: true
 } as AxiosProgressEvent;
 
 function logProgress(event: AxiosProgressEvent) {
-  console.log(`Loaded: ${event.loaded}, Total: ${event.total}`);
+  console.log(`Loaded: ${event.loaded}, Total: ${event.total}, Computable: ${event.lengthComputable}`);
 }
 
 const progressHistory: AxiosProgressEvent[] = [
@@ -69,7 +74,8 @@ const progressHistory: AxiosProgressEvent[] = [
     estimated: undefined,
     upload: true,
     download: false,
-    event: undefined
+    event: undefined,
+    lengthComputable: true
   }
 ];
 
@@ -82,6 +88,7 @@ const baseProgress = {
 
 const extendedProgress: AxiosProgressEvent = {
   ...baseProgress,
+  lengthComputable: true,
   rate: 1000,
   estimated: 0.5,
   upload: false,
@@ -99,14 +106,17 @@ function simulateProgress(): Promise<AxiosProgressEvent> {
     estimated: 0,
     upload: false,
     download: true,
-    event: undefined
+    event: undefined,
+    lengthComputable: true
   });
 }
 
 function processEvent<T extends AxiosProgressEvent>(event: T): T {
   return {
     ...event,
-    processed: true
+    processed: true,
+    // Add the required lengthComputable property if it doesn't exist in the event
+    lengthComputable: 'lengthComputable' in event ? event.lengthComputable : false
   } as T;
 }
 
