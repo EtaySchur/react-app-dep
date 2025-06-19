@@ -39,35 +39,30 @@ const AgGridExample: React.FC = () => {
 
   const handleAddRangeSelection = useCallback(() => {
     if (gridApi) {
-      const rangeParams: AddRangeSelectionParams = {
-        rowStart: 0,
-        floatingStart: 'top',
-        rowEnd: 2,
-        floatingEnd: 'top',
+      gridApi.addCellRange({
+        rowStartIndex: 0,
+        rowStartPinned: 'top',
+        rowEndIndex: 2,
+        rowEndPinned: 'top',
         columnStart: 'make',
         columnEnd: 'price'
-      };
+      });
       
-      console.log('Using AddRangeSelectionParams:', rangeParams);
+      console.log('Using addCellRange API');
     }
   }, [gridApi]);
 
   useEffect(() => {
     try {
-      const angleSelect = new AgAngleSelect();
-      console.log('Created AgAngleSelect instance:', angleSelect);
-      
-      angleSelect.setRadius(50);
-      angleSelect.setValue(45);
-      console.log('AngleSelect radius:', angleSelect.getRadius());
-      console.log('AngleSelect value:', angleSelect.getValue());
+      // AgAngleSelect has been removed from the library
+      console.log('AgAngleSelect has been removed from the library');
     } catch (error) {
       console.log('AgAngleSelect usage failed:', error);
     }
   }, []);
 
   const createChartConfiguration = useCallback(() => {
-    const areaSeriesOptions: AgAreaSeriesOptions = {
+    const areaSeriesOptions = {
       type: 'area',
       xKey: 'year',
       yKey: 'price',
@@ -79,7 +74,7 @@ const AgGridExample: React.FC = () => {
       stacked: true
     };
 
-    const axisLabelOptions: AgAxisLabelOptions = {
+    const axisLabelOptions = {
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: 12,
@@ -94,12 +89,12 @@ const AgGridExample: React.FC = () => {
       }
     };
 
-    const axisGridStyle: AgAxisGridStyle = {
+    const axisGridStyle = {
       stroke: '#e0e0e0',
       lineDash: [5, 5]
     };
 
-    const areaSeriesTooltip: AgAreaSeriesTooltip = {
+    const areaSeriesTooltip = {
       renderer: (params) => {
         return `<b>${params.xValue}</b>: ${params.yValue}`;
       },
@@ -107,10 +102,10 @@ const AgGridExample: React.FC = () => {
     };
 
     console.log('Chart configuration:');
-    console.log('- AgAreaSeriesOptions:', areaSeriesOptions);
-    console.log('- AgAxisLabelOptions:', axisLabelOptions);
-    console.log('- AgAxisGridStyle:', axisGridStyle);
-    console.log('- AgAreaSeriesTooltip:', areaSeriesTooltip);
+    console.log('- Area Series Options:', areaSeriesOptions);
+    console.log('- Axis Label Options:', axisLabelOptions);
+    console.log('- Axis Grid Style:', axisGridStyle);
+    console.log('- Area Series Tooltip:', areaSeriesTooltip);
 
     return {
       areaSeriesOptions,
