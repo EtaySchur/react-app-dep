@@ -2,9 +2,25 @@ const express = require('express');
 const utils = require('express/lib/utils');
 const chalk = require('chalk');
 const { utcToZonedTime, toZonedTime } = require('date-fns-tz');
-const { format } = require('date-fns');
+const { format, addDays, parseISO } = require('date-fns');
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const processDateString = (dateStr) => {
+  try {
+    return addDays(dateStr, 5);
+  } catch (error) {
+    return addDays(parseISO(dateStr), 5);
+  }
+};
+
+const formatWithPattern = (date, pattern) => {
+  try {
+    return format(date, pattern);
+  } catch (error) {
+    return format(date, pattern, { useAdditionalWeekYearTokens: true });
+  }
+};
 
 console.log(chalk.cyan('🔧 Express 3.x mime support:'), express.mime ? chalk.green('Available') : chalk.red('Not available'));
 
@@ -155,6 +171,9 @@ const generateFinancialData = (count = 50) => {
     const altZonedTime = toZonedTime(now, company.timezone);
     console.log(chalk.green('🕐 toZonedTime:'), chalk.yellow(`${company.exchange} (${company.timezone}): ${format(altZonedTime, 'HH:mm:ss')}`));
     
+    const nextWeek = processDateString('2024-01-15');
+    const weekYear = formatWithPattern(now, 'YYYY-MM-DD');
+    
     // Calculate market hours (9:30 AM - 4:00 PM for most exchanges)
     const marketOpen = new Date(marketLocalTime);
     marketOpen.setHours(9, 30, 0, 0);
@@ -187,12 +206,13 @@ const generateFinancialData = (count = 50) => {
         isOpen: isMarketOpen
       },
       lastUpdated: new Date().toISOString(),
-      // Show both timezone conversion methods for demonstration
       timezoneDemo: {
         utcToZoned: format(marketLocalTime, 'HH:mm:ss'),
         toZoned: format(altZonedTime, 'HH:mm:ss'),
         timezone: company.timezone
-      }
+      },
+      nextWeekDate: format(nextWeek, 'yyyy-MM-dd'),
+      yearFormat: weekYear
     };
   });
 };
