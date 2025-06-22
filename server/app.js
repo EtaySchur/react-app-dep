@@ -1,6 +1,8 @@
 const express = require('express');
 const utils = require('express/lib/utils');
 const chalk = require('chalk');
+const { utcToZonedTime, toZonedTime } = require('date-fns-tz');
+const { format } = require('date-fns');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -115,24 +117,24 @@ const pathMiddleware = (req, res, next) => {
 app.use(advancedContentNegotiation);
 app.use(pathMiddleware);
 
-// Mock financial data for AG Grid component
+// Mock financial data for AG Grid component with timezone-aware market data
 const generateFinancialData = (count = 50) => {
   const companies = [
-    { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology' },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', sector: 'Technology' },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', sector: 'Technology' },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', sector: 'Consumer' },
-    { symbol: 'TSLA', name: 'Tesla Inc.', sector: 'Automotive' },
-    { symbol: 'META', name: 'Meta Platforms Inc.', sector: 'Technology' },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Technology' },
-    { symbol: 'NFLX', name: 'Netflix Inc.', sector: 'Entertainment' },
-    { symbol: 'CRM', name: 'Salesforce Inc.', sector: 'Technology' },
-    { symbol: 'ORCL', name: 'Oracle Corp.', sector: 'Technology' },
-    { symbol: 'JPM', name: 'JPMorgan Chase & Co.', sector: 'Financial' },
-    { symbol: 'BAC', name: 'Bank of America Corp.', sector: 'Financial' },
-    { symbol: 'WMT', name: 'Walmart Inc.', sector: 'Consumer' },
-    { symbol: 'JNJ', name: 'Johnson & Johnson', sector: 'Healthcare' },
-    { symbol: 'PG', name: 'Procter & Gamble Co.', sector: 'Consumer' }
+    { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'GOOGL', name: 'Alphabet Inc.', sector: 'Technology', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'MSFT', name: 'Microsoft Corp.', sector: 'Technology', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'AMZN', name: 'Amazon.com Inc.', sector: 'Consumer', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'TSLA', name: 'Tesla Inc.', sector: 'Automotive', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'META', name: 'Meta Platforms Inc.', sector: 'Technology', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'NVDA', name: 'NVIDIA Corp.', sector: 'Technology', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'NFLX', name: 'Netflix Inc.', sector: 'Entertainment', exchange: 'NASDAQ', timezone: 'America/New_York' },
+    { symbol: 'CRM', name: 'Salesforce Inc.', sector: 'Technology', exchange: 'NYSE', timezone: 'America/New_York' },
+    { symbol: 'ORCL', name: 'Oracle Corp.', sector: 'Technology', exchange: 'NYSE', timezone: 'America/New_York' },
+    { symbol: 'JPM', name: 'JPMorgan Chase & Co.', sector: 'Financial', exchange: 'NYSE', timezone: 'America/New_York' },
+    { symbol: 'BAC', name: 'Bank of America Corp.', sector: 'Financial', exchange: 'NYSE', timezone: 'America/New_York' },
+    { symbol: 'SAP', name: 'SAP SE', sector: 'Technology', exchange: 'XETRA', timezone: 'Europe/Berlin' },
+    { symbol: 'ASML', name: 'ASML Holding', sector: 'Technology', exchange: 'AEX', timezone: 'Europe/Amsterdam' },
+    { symbol: 'TSM', name: 'Taiwan Semiconductor', sector: 'Technology', exchange: 'TSE', timezone: 'Asia/Taipei' }
   ];
 
   return Array.from({ length: count }, (_, index) => {
@@ -141,6 +143,26 @@ const generateFinancialData = (count = 50) => {
     const volume = Math.floor(500000 + Math.random() * 10000000);
     const change = (Math.random() - 0.5) * 30;
     const changePercent = (change / basePrice) * 100;
+    
+    // Generate timezone-aware market data using date-fns-tz
+    const now = new Date();
+    
+    // Convert current UTC time to market's local timezone using utcToZonedTime
+    const marketLocalTime = utcToZonedTime(now, company.timezone);
+    console.log(chalk.blue('🌍 utcToZonedTime:'), chalk.yellow(`${company.exchange} (${company.timezone}): ${format(marketLocalTime, 'HH:mm:ss')}`));
+    
+    // Also demonstrate toZonedTime for comparison
+    const altZonedTime = toZonedTime(now, company.timezone);
+    console.log(chalk.green('🕐 toZonedTime:'), chalk.yellow(`${company.exchange} (${company.timezone}): ${format(altZonedTime, 'HH:mm:ss')}`));
+    
+    // Calculate market hours (9:30 AM - 4:00 PM for most exchanges)
+    const marketOpen = new Date(marketLocalTime);
+    marketOpen.setHours(9, 30, 0, 0);
+    const marketClose = new Date(marketLocalTime);
+    marketClose.setHours(16, 0, 0, 0);
+    
+    const isMarketOpen = marketLocalTime >= marketOpen && marketLocalTime <= marketClose;
+    const marketStatus = isMarketOpen ? 'OPEN' : 'CLOSED';
     
     return {
       id: index + 1,
@@ -155,7 +177,22 @@ const generateFinancialData = (count = 50) => {
       dividend: parseFloat((Math.random() * 6).toFixed(2)),
       beta: parseFloat((0.3 + Math.random() * 2).toFixed(2)),
       sector: company.sector,
-      lastUpdated: new Date().toISOString()
+      exchange: company.exchange,
+      timezone: company.timezone,
+      marketLocalTime: format(marketLocalTime, 'yyyy-MM-dd HH:mm:ss'),
+      marketStatus: marketStatus,
+      marketHours: {
+        open: format(marketOpen, 'HH:mm'),
+        close: format(marketClose, 'HH:mm'),
+        isOpen: isMarketOpen
+      },
+      lastUpdated: new Date().toISOString(),
+      // Show both timezone conversion methods for demonstration
+      timezoneDemo: {
+        utcToZoned: format(marketLocalTime, 'HH:mm:ss'),
+        toZoned: format(altZonedTime, 'HH:mm:ss'),
+        timezone: company.timezone
+      }
     };
   });
 };
@@ -168,18 +205,59 @@ const mockUsers = [
   { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'manager', active: true }
 ];
 
-// Mock analytics data
-const generateAnalyticsData = () => ({
-  pageViews: Math.floor(1000 + Math.random() * 9000),
-  uniqueVisitors: Math.floor(500 + Math.random() * 2000),
-  bounceRate: parseFloat((0.2 + Math.random() * 0.6).toFixed(2)),
-  avgSessionDuration: Math.floor(120 + Math.random() * 300),
-  topPages: [
-    { path: '/dashboard', views: Math.floor(200 + Math.random() * 800) },
-    { path: '/analytics', views: Math.floor(150 + Math.random() * 600) },
-    { path: '/users', views: Math.floor(100 + Math.random() * 400) }
-  ]
-});
+// Mock analytics data with global timezone data
+const generateAnalyticsData = () => {
+  const now = new Date();
+  
+  // Generate analytics for different global regions using date-fns-tz
+  const regions = [
+    { name: 'North America', timezone: 'America/New_York' },
+    { name: 'Europe', timezone: 'Europe/London' },
+    { name: 'Asia Pacific', timezone: 'Asia/Tokyo' }
+  ];
+  
+  const regionalData = regions.map(region => {
+    const regionalTime = utcToZonedTime(now, region.timezone);
+    const toZonedTime_regional = toZonedTime(now, region.timezone);
+    
+    console.log(chalk.magenta('📊 Analytics utcToZonedTime:'), chalk.cyan(`${region.name}: ${format(regionalTime, 'HH:mm:ss')}`));
+    console.log(chalk.magenta('📊 Analytics toZonedTime:'), chalk.cyan(`${region.name}: ${format(toZonedTime_regional, 'HH:mm:ss')}`));
+    
+    return {
+      region: region.name,
+      timezone: region.timezone,
+      localTime: format(regionalTime, 'yyyy-MM-dd HH:mm:ss'),
+      pageViews: Math.floor(1000 + Math.random() * 5000),
+      uniqueVisitors: Math.floor(200 + Math.random() * 1000),
+      conversionRate: parseFloat((0.02 + Math.random() * 0.08).toFixed(3)),
+      timezoneMethods: {
+        utcToZoned: format(regionalTime, 'HH:mm:ss'),
+        toZoned: format(toZonedTime_regional, 'HH:mm:ss')
+      }
+    };
+  });
+
+  return {
+    pageViews: Math.floor(1000 + Math.random() * 9000),
+    uniqueVisitors: Math.floor(500 + Math.random() * 2000),
+    bounceRate: parseFloat((0.2 + Math.random() * 0.6).toFixed(2)),
+    avgSessionDuration: Math.floor(120 + Math.random() * 300),
+    topPages: [
+      { path: '/dashboard', views: Math.floor(200 + Math.random() * 800) },
+      { path: '/analytics', views: Math.floor(150 + Math.random() * 600) },
+      { path: '/users', views: Math.floor(100 + Math.random() * 400) }
+    ],
+    regionalAnalytics: regionalData,
+    generatedAt: {
+      utc: now.toISOString(),
+      timezones: regions.map(r => ({
+        region: r.name,
+        timezone: r.timezone,
+        localTime: format(utcToZonedTime(now, r.timezone), 'yyyy-MM-dd HH:mm:ss')
+      }))
+    }
+  };
+};
 
 // API Routes
 
