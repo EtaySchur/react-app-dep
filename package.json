@@ -35,7 +35,7 @@
   "description": "A comprehensive tool for analyzing dependency upgrades and detecting breaking changes in JavaScript/TypeScript projects. Features real-world examples of deprecated APIs and migration patterns.",
   "dependencies": {
     "ag-grid-react": "^28.2.1",
-    "axios": "1.6.4",
+    "axios": "1.8.2",
     "chalk": "^4.1.0",
     "class-validator": "^0.13.2",
     "express": "3.21.2",
