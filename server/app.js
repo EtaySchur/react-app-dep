@@ -1,41 +1,42 @@
 const express = require('express');
 const utils = require('express/lib/utils');
+const chalk = require('chalk');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-console.log('🔧 Express 3.x mime support:', express.mime ? 'Available' : 'Not available');
+console.log(chalk.cyan('🔧 Express 3.x mime support:'), express.mime ? chalk.green('Available') : chalk.red('Not available'));
 
 const testAcceptsHeader = (header) => {
   const result = utils.accepts(header);
-  console.log('✅ utils.accepts working:', result);
+  console.log(chalk.green('✅ utils.accepts working:'), chalk.yellow(result));
   return result;
 };
 
 const testAcceptsArray = (types) => {
   const result = utils.acceptsArray(types);
-  console.log('✅ utils.acceptsArray working:', result);
+  console.log(chalk.green('✅ utils.acceptsArray working:'), chalk.yellow(result));
   return result;
 };
 
 const createPathRegexp = (path, keys = []) => {
   const regexp = utils.pathRegexp(path, keys, { sensitive: false, strict: false });
-  console.log('✅ utils.pathRegexp working for path:', path);
+  console.log(chalk.green('✅ utils.pathRegexp working for path:'), chalk.magenta(path));
   return { regexp, keys };
 };
 
 const applyLocals = (obj) => {
   const result = utils.locals(obj);
-  console.log('✅ utils.locals working');
+  console.log(chalk.green('✅ utils.locals working'));
   return result;
 };
 
 const parseParameters = (str) => {
   const result = utils.parseParams(str);
-  console.log('✅ utils.parseParams working');
+  console.log(chalk.green('✅ utils.parseParams working'));
   return result;
 };
 
-console.log('🚨 Initializing Express 3.x deprecated APIs...');
+console.log(chalk.red.bold('🚨 Initializing Express 3.x deprecated APIs...'));
 testAcceptsHeader('text/html,application/json;q=0.9');
 testAcceptsArray(['text/html', 'application/json', 'application/xml']);
 createPathRegexp('/api/users/:id', []);
@@ -86,7 +87,7 @@ const advancedContentNegotiation = (req, res, next) => {
     acceptsArrayResult: acceptsArrayResult
   };
   
-  console.log(`🔧 Advanced content negotiation using deprecated APIs - Type: ${negotiatedType}`);
+  console.log(chalk.cyan(`🔧 Advanced content negotiation using deprecated APIs - Type: ${negotiatedType}`));
   next();
 };
 
@@ -103,7 +104,7 @@ const pathMiddleware = (req, res, next) => {
     if (pathResult && pathResult.regexp.test(req.path)) {
       req.pathPattern = pattern;
       req.pathKeys = pathResult.keys;
-      console.log(`🎯 Path matched using deprecated pathRegexp: ${pattern}`);
+      console.log(chalk.green(`🎯 Path matched using deprecated pathRegexp: ${pattern}`));
       break;
     }
   }
@@ -204,8 +205,8 @@ app.get('/api/stocks', (req, res) => {
     return sortOrder * (a[sortBy] - b[sortBy]);
   });
 
-  console.log(`GET /api/stocks - Content-Type negotiated: ${req.negotiatedType.value}`);
-  console.log(`🎯 Path pattern: ${req.pathPattern || 'none'}`);
+  console.log(chalk.cyan(`GET /api/stocks - Content-Type negotiated: ${req.negotiatedType.value}`));
+  console.log(chalk.green(`🎯 Path pattern: ${req.pathPattern || 'none'}`));
 
   res.json({
     data,
@@ -257,7 +258,7 @@ app.get('/api/users', (req, res) => {
     users = users.filter(user => user.active === (active === 'true'));
   }
 
-  console.log(`GET /api/users - Content-Type: ${req.negotiatedType.value}`);
+  console.log(chalk.cyan(`GET /api/users - Content-Type: ${req.negotiatedType.value}`));
 
   res.json({
     users,
@@ -278,7 +279,7 @@ app.post('/api/users', (req, res) => {
 
   mockUsers.push(newUser);
 
-  console.log(`POST /api/users - Created user: ${newUser.name}`);
+  console.log(chalk.cyan(`POST /api/users - Created user: ${newUser.name}`));
 
   res.status(201).json({
     user: newUser,
@@ -312,7 +313,7 @@ app.put('/api/users/:id', (req, res) => {
 app.get('/api/analytics', (req, res) => {
   const data = generateAnalyticsData();
   
-  console.log(`GET /api/analytics - Content-Type: ${req.negotiatedType.value}`);
+  console.log(chalk.cyan(`GET /api/analytics - Content-Type: ${req.negotiatedType.value}`));
 
   res.json({
     ...data,
@@ -376,7 +377,7 @@ app.get('/api/express-apis', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
+  console.error(chalk.red.bold('❌ Server error:'), chalk.red(err.message));
   res.status(500).json({
     error: 'Internal Server Error',
     message: err.message,
@@ -396,11 +397,17 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Express 4.21.0 Server running on port ${PORT}`);
-  console.log(`📊 Financial API: http://localhost:${PORT}/api/stocks`);
-  console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
-  console.log(`📈 Analytics API: http://localhost:${PORT}/api/analytics`);
-  console.log(`🔧 Health Check: http://localhost:${PORT}/api/health`);
+  console.log(chalk.green.bold('\n🎉 Server Successfully Started!'));
+  console.log(chalk.blue('='.repeat(50)));
+  console.log(chalk.green(`🚀 Express 4.21.0 Server running on port ${PORT}`));
+  console.log(chalk.yellow(`📦 Using chalk@4.1.0 for colorful logging`));
+  console.log(chalk.blue('='.repeat(50)));
+  console.log(chalk.magenta.bold('📋 Available APIs:'));
+  console.log(chalk.magenta(`  📊 Financial API: http://localhost:${PORT}/api/stocks`));
+  console.log(chalk.magenta(`  👥 Users API: http://localhost:${PORT}/api/users`));
+  console.log(chalk.magenta(`  📈 Analytics API: http://localhost:${PORT}/api/analytics`));
+  console.log(chalk.magenta(`  🔧 Health Check: http://localhost:${PORT}/api/health`));
+  console.log(chalk.blue('='.repeat(50)));
 });
 
 module.exports = app; 
