@@ -83,6 +83,7 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
         <div>
           <label htmlFor="email">Email:</label>
           <CustomFastField
+            className="custom-class-name"
             name="email"
             type="email"
             placeholder="Email"

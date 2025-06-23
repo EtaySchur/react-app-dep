@@ -6,7 +6,6 @@ import { FastField, FastFieldConfig } from 'formik';
 interface CustomFastFieldProps extends FastFieldConfig<any> {
   type?: string;
   placeholder?: string;
-  className?: string;
 }
 
 // Now we can properly use FastFieldConfig with our extended props
