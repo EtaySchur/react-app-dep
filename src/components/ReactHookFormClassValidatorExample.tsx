@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   useForm,
   UseFormMethods,
-  UseFormOptions,
+  FormOptions,
   UseControllerMethods,
   ControllerProps,
   InputState,
@@ -43,7 +43,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [submitData, setSubmitData] = useState<any>(null);
 
-  const formOptions: UseFormOptions<UserFormData> = {
+  const formOptions: FormOptions<UserFormData> = {
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
