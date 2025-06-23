@@ -39,7 +39,7 @@
     "chalk": "^4.1.0",
     "class-validator": "^0.13.2",
     "express": "3.21.2",
-    "formik": "1.5.8",
+    "formik": "2.0.1",
     "highlight.js": "9.16.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
