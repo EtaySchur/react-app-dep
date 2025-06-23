@@ -1,6 +1,7 @@
 const express = require('express');
 const utils = require('express/lib/utils');
 const chalk = require('chalk');
+const { utcToZonedTime, zonedTimeToUtc } = require('date-fns-tz');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -115,8 +116,8 @@ const pathMiddleware = (req, res, next) => {
 app.use(advancedContentNegotiation);
 app.use(pathMiddleware);
 
-// Mock financial data for AG Grid component
-const generateFinancialData = (count = 50) => {
+// Mock financial data for AG Grid component with timezone support
+const generateFinancialData = (count = 50, timezone = 'America/New_York') => {
   const companies = [
     { symbol: 'AAPL', name: 'Apple Inc.', sector: 'Technology' },
     { symbol: 'GOOGL', name: 'Alphabet Inc.', sector: 'Technology' },
@@ -142,6 +143,13 @@ const generateFinancialData = (count = 50) => {
     const change = (Math.random() - 0.5) * 30;
     const changePercent = (change / basePrice) * 100;
     
+    // Use date-fns-tz for timezone-aware timestamps
+    const utcDate = new Date();
+    const zonedDate = utcToZonedTime(utcDate, timezone);
+    const marketCloseTime = new Date(zonedDate);
+    marketCloseTime.setHours(16, 0, 0, 0); // Market closes at 4 PM in the specified timezone
+    const lastUpdatedZoned = utcToZonedTime(marketCloseTime, timezone);
+    
     return {
       id: index + 1,
       symbol: `${company.symbol}${index > companies.length - 1 ? (Math.floor(index / companies.length) + 1) : ''}`,
@@ -155,7 +163,10 @@ const generateFinancialData = (count = 50) => {
       dividend: parseFloat((Math.random() * 6).toFixed(2)),
       beta: parseFloat((0.3 + Math.random() * 2).toFixed(2)),
       sector: company.sector,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: utcDate.toISOString(),
+      lastUpdatedZoned: lastUpdatedZoned.toISOString(),
+      marketTimezone: timezone,
+      marketCloseTime: marketCloseTime.toISOString()
     };
   });
 };
@@ -183,12 +194,14 @@ const generateAnalyticsData = () => ({
 
 // API Routes
 
-// Financial data endpoints for AG Grid
+// Financial data endpoints for AG Grid with timezone support
 app.get('/api/stocks', (req, res) => {
   const count = parseInt(req.query.count) || 50;
   const sector = req.query.sector;
+  const timezone = req.query.timezone || 'America/New_York';
   
-  let data = generateFinancialData(count);
+  // Generate timezone-aware financial data
+  let data = generateFinancialData(count, timezone);
   
   if (sector) {
     data = data.filter(stock => stock.sector.toLowerCase() === sector.toLowerCase());
@@ -205,13 +218,20 @@ app.get('/api/stocks', (req, res) => {
     return sortOrder * (a[sortBy] - b[sortBy]);
   });
 
+  // Create timezone-aware response timestamp
+  const utcNow = new Date();
+  const zonedNow = utcToZonedTime(utcNow, timezone);
+
   console.log(chalk.cyan(`GET /api/stocks - Content-Type negotiated: ${req.negotiatedType.value}`));
   console.log(chalk.green(`🎯 Path pattern: ${req.pathPattern || 'none'}`));
+  console.log(chalk.magenta(`🕐 Timezone: ${timezone}, Zoned time: ${zonedNow.toISOString()}`));
 
   res.json({
     data,
     total: data.length,
-    timestamp: new Date().toISOString(),
+    timestamp: utcNow.toISOString(),
+    timestampZoned: zonedNow.toISOString(),
+    timezone: timezone,
     contentType: req.negotiatedType.value,
     deprecatedAPIsUsed: {
       accepts: !!req.negotiatedType.acceptsResult,
@@ -221,10 +241,11 @@ app.get('/api/stocks', (req, res) => {
   });
 });
 
-// Stock details endpoint
+// Stock details endpoint with timezone support
 app.get('/api/stocks/:symbol', (req, res) => {
   const symbol = req.params.symbol;
-  const stock = generateFinancialData(100).find(s => s.symbol === symbol);
+  const timezone = req.query.timezone || 'America/New_York';
+  const stock = generateFinancialData(100, timezone).find(s => s.symbol === symbol);
   
   if (!stock) {
     return res.status(404).json({
@@ -234,18 +255,43 @@ app.get('/api/stocks/:symbol', (req, res) => {
     });
   }
 
-  // Add historical data
-  const historicalData = Array.from({ length: 30 }, (_, i) => ({
-    date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    price: stock.price + (Math.random() - 0.5) * 20,
-    volume: stock.volume + Math.floor((Math.random() - 0.5) * 1000000)
-  })).reverse();
+  // Add historical data with timezone-aware timestamps
+  const historicalData = Array.from({ length: 30 }, (_, i) => {
+    const utcHistoricalDate = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+    const zonedHistoricalDate = utcToZonedTime(utcHistoricalDate, timezone);
+    
+    // Simulate market close time for historical data
+    const marketCloseHistorical = new Date(zonedHistoricalDate);
+    marketCloseHistorical.setHours(16, 0, 0, 0);
+    
+    return {
+      date: utcHistoricalDate.toISOString().split('T')[0],
+      dateZoned: zonedHistoricalDate.toISOString().split('T')[0],
+      marketCloseTime: marketCloseHistorical.toISOString(),
+      price: stock.price + (Math.random() - 0.5) * 20,
+      volume: stock.volume + Math.floor((Math.random() - 0.5) * 1000000),
+      timezone: timezone
+    };
+  }).reverse();
+
+  // Convert stock's zoned time back to UTC for comparison
+  const stockZonedTime = new Date(stock.lastUpdatedZoned);
+  const stockBackToUtc = zonedTimeToUtc(stockZonedTime, stock.marketTimezone);
+
+  console.log(chalk.cyan(`GET /api/stocks/${symbol} - Timezone: ${timezone}`));
+  console.log(chalk.yellow(`🔄 UTC to Zoned conversion demo - Original UTC: ${stock.lastUpdated}, Back to UTC: ${stockBackToUtc.toISOString()}`));
 
   res.json({
     ...stock,
     historical: historicalData,
     contentType: req.negotiatedType.value,
-    pathPattern: req.pathPattern
+    pathPattern: req.pathPattern,
+    timezoneConversions: {
+      originalUtc: stock.lastUpdated,
+      convertedToZoned: stock.lastUpdatedZoned,
+      convertedBackToUtc: stockBackToUtc.toISOString(),
+      requestedTimezone: timezone
+    }
   });
 });
 
@@ -309,15 +355,39 @@ app.put('/api/users/:id', (req, res) => {
   });
 });
 
-// Analytics endpoint for dashboard
+// Analytics endpoint for dashboard with timezone support
 app.get('/api/analytics', (req, res) => {
+  const timezone = req.query.timezone || 'America/New_York';
   const data = generateAnalyticsData();
   
+  // Create timezone-aware timestamps for analytics
+  const utcNow = new Date();
+  const zonedNow = utcToZonedTime(utcNow, timezone);
+  
+  // Simulate business hours analytics (9 AM to 5 PM in specified timezone)
+  const businessStart = new Date(zonedNow);
+  businessStart.setHours(9, 0, 0, 0);
+  const businessEnd = new Date(zonedNow);
+  businessEnd.setHours(17, 0, 0, 0);
+  
+  const businessStartUtc = zonedTimeToUtc(businessStart, timezone);
+  const businessEndUtc = zonedTimeToUtc(businessEnd, timezone);
+  
   console.log(chalk.cyan(`GET /api/analytics - Content-Type: ${req.negotiatedType.value}`));
+  console.log(chalk.magenta(`📊 Analytics timezone: ${timezone}, Business hours: ${businessStart.toTimeString()} - ${businessEnd.toTimeString()}`));
 
   res.json({
     ...data,
-    timestamp: new Date().toISOString(),
+    timestamp: utcNow.toISOString(),
+    timestampZoned: zonedNow.toISOString(),
+    timezone: timezone,
+    businessHours: {
+      startLocal: businessStart.toISOString(),
+      endLocal: businessEnd.toISOString(),
+      startUtc: businessStartUtc.toISOString(),
+      endUtc: businessEndUtc.toISOString(),
+      timezone: timezone
+    },
     contentType: req.negotiatedType.value
   });
 });
