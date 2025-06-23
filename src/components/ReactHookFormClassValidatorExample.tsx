@@ -43,7 +43,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [submitData, setSubmitData] = useState<any>(null);
 
-  const formOptions: UseFormOptions<UserFormData> = {
+  const formOptions: UseFormProps<UserFormData> = {
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -59,28 +59,29 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     criteriaMode: 'firstError'
   };
 
-  const formMethods: UseFormMethods<UserFormData> = useForm(formOptions);
-  const { register, handleSubmit, errors, formState, reset, getValues, setValue, trigger } = formMethods;
+  const formMethods = useForm(formOptions);
+  const { register, handleSubmit, formState, reset, getValues, setValue, trigger } = formMethods;
+  const { errors } = formState;
 
-  const controllerOptions: UseControllerOptions<UserFormData> = {
+  const controllerProps: ControllerProps<UserFormData> = {
     name: 'name',
     defaultValue: '',
     control: formMethods.control,
-    onFocus: () => console.log('Field focused')
+    rules: {
+      onBlur: () => console.log('Field focused')
+    }
   };
 
   const handleFormReset = () => {
-    const omitResetState: OmitResetState = {
-      errors: false,
-      isDirty: true,
-      isSubmitted: true,
-      touched: false,
-      isValid: false,
-      submitCount: false,
-      dirtyFields: true
-    };
-    
-    reset(undefined, omitResetState);
+    reset(undefined, {
+      keepErrors: false,
+      keepDirty: true,
+      keepIsSubmitted: true,
+      keepTouched: false,
+      keepIsValid: false,
+      keepSubmitCount: false,
+      keepDirtyValues: true
+    });
   };
 
   const handleValidationWithClassValidator = async () => {
@@ -127,15 +128,15 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     }
   };
 
-  const createFieldArrayMethods = (): UseFieldArrayMethods<any> => {
-    const fieldArrayOptions: UseFieldArrayOptions = {
+  const createFieldArrayMethods = () => {
+    const fieldArrayOptions = {
       name: 'hobbies',
       keyName: 'id'
     };
     
     console.log('Field array options:', fieldArrayOptions);
     
-    const fieldArrayMethods: UseFieldArrayMethods<any> = {
+    const fieldArrayMethods = {
       swap: (indexA: number, indexB: number) => console.log('Swap', indexA, indexB),
       move: (indexA: number, indexB: number) => console.log('Move', indexA, indexB),
       prepend: (value: any, shouldFocus?: boolean) => console.log('Prepend', value, shouldFocus),
@@ -165,8 +166,8 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
 
 
 
-  const createControllerMethods = (): UseControllerMethods<UserFormData> => {
-    const mockControllerMethods: UseControllerMethods<UserFormData> = {
+  const createControllerMethods = () => {
+    const mockControllerMethods = {
       field: {
         onChange: () => {},
         onBlur: () => {},
@@ -234,16 +235,16 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
       fieldArrayMethods,
       arrayField,
       validationSchema,
-      controllerOptions,
+      controllerProps,
       controllerMethods,
       formOptions
     });
   };
 
-  const getInputState = (fieldName: keyof UserFormData): InputState => {
+  const getInputState = (fieldName: keyof UserFormData) => {
     return {
       invalid: !!errors[fieldName],
-      isTouched: !!formState.touched[fieldName],
+      isTouched: !!formState.touchedFields[fieldName],
       isDirty: !!formState.dirtyFields[fieldName]
     };
   };
