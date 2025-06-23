@@ -39,6 +39,100 @@ class UserDTO {
   validFromDate: Date = new Date();
 }
 
+type OmitResetState = {
+  errors?: boolean;
+  isDirty?: boolean;
+  isSubmitted?: boolean;
+  touched?: boolean;
+  isValid?: boolean;
+  submitCount?: boolean;
+  dirtyFields?: boolean;
+};
+
+type InputState = {
+  invalid: boolean;
+  isTouched: boolean;
+  isDirty: boolean;
+};
+
+type ArrayField = {
+  id: string;
+  name: string;
+  value: string;
+};
+
+type UseControllerMethods<T> = {
+  field: {
+    onChange: () => void;
+    onBlur: () => void;
+    value: string;
+    name: string;
+    ref: { current: null | HTMLElement };
+  };
+  meta: {
+    invalid: boolean;
+    isTouched: boolean;
+    isDirty: boolean;
+  };
+};
+
+type UseFieldArrayMethods<T> = {
+  swap: (indexA: number, indexB: number) => void;
+  move: (indexA: number, indexB: number) => void;
+  prepend: (value: any, shouldFocus?: boolean) => void;
+  append: (value: any, shouldFocus?: boolean) => void;
+  remove: (index?: number | number[]) => void;
+  insert: (index: number, value: any, shouldFocus?: boolean) => void;
+  fields: any[];
+};
+
+type UseFieldArrayOptions = {
+  name: string;
+  keyName: string;
+};
+
+type HandleChange = (event: Event) => Promise<boolean>;
+
+type ValidationSchema = {
+  name: string;
+  properties: {
+    [key: string]: Array<{
+      type: string;
+      constraints: any[];
+      message: string;
+      each: boolean;
+      always: boolean;
+      groups: string[];
+      options: Record<string, any>;
+    }>;
+  };
+};
+
+type ControllerProps<T> = {
+  name: keyof T & string;
+  defaultValue: string;
+  control: any;
+  onFocus: () => void;
+};
+
+type FormOptions<T> = {
+  mode: 'onChange' | 'onBlur' | 'onSubmit' | 'onTouched' | 'all';
+  reValidateMode: 'onChange' | 'onBlur' | 'onSubmit';
+  defaultValues: T;
+  shouldFocusError: boolean;
+  shouldUnregister: boolean;
+  criteriaMode: 'firstError' | 'all';
+};
+
+type UserFormData = {
+  id: string;
+  name: string;
+  email: string;
+  birthDate: Date;
+  locale: string;
+  hobbies: any[];
+};
+
 const ReactHookFormClassValidatorExample: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [submitData, setSubmitData] = useState<any>(null);
@@ -59,7 +153,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     criteriaMode: 'firstError'
   };
 
-  const formMethods: UseFormMethods<UserFormData> = useForm(formOptions);
+  const formMethods = useForm<UserFormData>(formOptions);
   const { register, handleSubmit, errors, formState, reset, getValues, setValue, trigger } = formMethods;
 
   const controllerOptions: ControllerProps<UserFormData> = {
