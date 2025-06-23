@@ -4,7 +4,7 @@ import {
   UseFormMethods,
   UseFormOptions,
   UseControllerMethods,
-  UseControllerOptions,
+  ControllerProps,
   InputState,
   HandleChange,
   ArrayField,
@@ -62,7 +62,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
   const formMethods: UseFormMethods<UserFormData> = useForm(formOptions);
   const { register, handleSubmit, errors, formState, reset, getValues, setValue, trigger } = formMethods;
 
-  const controllerOptions: UseControllerOptions<UserFormData> = {
+  const controllerOptions: ControllerProps<UserFormData> = {
     name: 'name',
     defaultValue: '',
     control: formMethods.control,
