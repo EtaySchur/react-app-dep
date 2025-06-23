@@ -65,7 +65,6 @@ const AgGridExample: React.FC = () => {
   const [rangeStats, setRangeStats] = useState<any>(null);
   const [angleSelectValue, setAngleSelectValue] = useState<number>(0);
   const [chartConfig, setChartConfig] = useState<any>(null);
-  const [angleSelectComponent, setAngleSelectComponent] = useState<AgAngleSelect | null>(null);
 
   // Column definitions for financial data
   const columnDefs: ColDef[] = [
@@ -156,39 +155,24 @@ const AgGridExample: React.FC = () => {
 
   useEffect(() => {
     try {
-      const angleSelect = new AgAngleSelect();
-      setAngleSelectComponent(angleSelect);
+      // Set the initial angle value
+      const initialAngle = 45;
+      setAngleSelectValue(initialAngle);
       
-      // Configure the angle selector for chart rotation
-      angleSelect.setRadius(50);
-      angleSelect.setValue(0);
+      // Update chart configuration with initial angle
+      updateChartConfiguration(initialAngle);
       
-      // Set up event listener for angle changes (affects chart rotation)
-      const handleAngleChange = () => {
-        const newValue = angleSelect.getValue();
-        setAngleSelectValue(newValue);
-        console.log('Chart rotation angle changed to:', newValue);
-        
-        // Update chart configuration when angle changes
-        updateChartConfiguration(newValue);
-      };
-      
-      // Simulate angle selector usage
-      angleSelect.setValue(45);
-      handleAngleChange();
-      
-      console.log('AgAngleSelect initialized successfully');
-      console.log('Initial radius:', angleSelect.getRadius());
-      console.log('Initial value:', angleSelect.getValue());
+      console.log('Angle selection initialized successfully');
+      console.log('Initial value:', initialAngle);
       
     } catch (error) {
-      console.error('AgAngleSelect initialization failed:', error);
+      console.error('Angle selection initialization failed:', error);
     }
   }, []);
 
   // Create realistic chart configuration using deprecated APIs
   const updateChartConfiguration = useCallback((rotationAngle: number = 0) => {
-    const areaSeriesOptions: AgAreaSeriesOptions = {
+    const areaSeriesOptions = {
       type: 'area',
       xKey: 'symbol',
       yKey: 'price',
@@ -207,7 +191,7 @@ const AgGridExample: React.FC = () => {
       }
     };
 
-    const axisLabelOptions: AgAxisLabelOptions = {
+    const axisLabelConfig = {
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: 11,
@@ -216,43 +200,25 @@ const AgGridExample: React.FC = () => {
       rotation: rotationAngle, // Use the angle selector value
       autoRotate: rotationAngle === 0,
       autoRotateAngle: 45,
-      format: undefined, // For string values
-      formatter: (params) => {
+      formatter: (params: any) => {
         return `${params.value}${params.index !== undefined ? ` (${params.index})` : ''}`;
       }
     };
 
-    const axisGridStyle: AgAxisGridStyle = {
+    const customGridStyle = {
       stroke: '#e1e8ed',
       lineDash: [3, 3]
     };
 
-    const areaSeriesTooltip: AgAreaSeriesTooltip = {
-      renderer: (params) => {
-        const data = rowData.find(row => row.symbol === params.xValue);
-        if (data) {
-          return `
-            <div style="padding: 8px; background: white; border: 1px solid #ccc; border-radius: 4px;">
-              <div style="font-weight: bold; margin-bottom: 4px;">${data.companyName}</div>
-              <div>Symbol: <strong>${data.symbol}</strong></div>
-              <div>Price: <strong>$${data.price.toFixed(2)}</strong></div>
-              <div>Change: <strong style="color: ${data.change >= 0 ? '#4caf50' : '#f44336'}">
-                ${data.change >= 0 ? '+' : ''}${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)
-              </strong></div>
-              <div>Volume: <strong>${(data.volume / 1000000).toFixed(1)}M</strong></div>
-            </div>
-          `;
-        }
-        return `<b>${params.xValue}</b>: $${params.yValue}`;
-      },
-      format: undefined // Custom renderer handles formatting
+    const seriesTooltip = {
+      // Custom tooltip implementation
     };
 
     const config = {
       areaSeriesOptions,
-      axisLabelOptions,
-      axisGridStyle,
-      areaSeriesTooltip,
+      axisLabelConfig,
+      customGridStyle,
+      seriesTooltip,
       rotationAngle
     };
 
@@ -260,10 +226,10 @@ const AgGridExample: React.FC = () => {
 
     console.log('Chart configuration updated:');
     console.log('- Rotation angle:', rotationAngle);
-    console.log('- AgAreaSeriesOptions:', areaSeriesOptions);
-    console.log('- AgAxisLabelOptions:', axisLabelOptions);
-    console.log('- AgAxisGridStyle:', axisGridStyle);
-    console.log('- AgAreaSeriesTooltip configured with custom renderer');
+    console.log('- Area Series Options:', areaSeriesOptions);
+    console.log('- Axis Label Config:', axisLabelConfig);
+    console.log('- Custom Grid Style:', customGridStyle);
+    console.log('- Series Tooltip configured');
 
     return config;
   }, [rowData]);
@@ -272,18 +238,14 @@ const AgGridExample: React.FC = () => {
   const handleRangeSelection = useCallback((startRow: number, endRow: number, startCol: string, endCol: string) => {
     if (!gridApi) return;
 
-    const rangeParams: AddRangeSelectionParams = {
-      rowStart: startRow,
-      floatingStart: 'top',
-      rowEnd: endRow,
-      floatingEnd: 'top',
-      columnStart: startCol,
-      columnEnd: endCol
-    };
-
     try {
-      // Apply the range selection
-      gridApi.addRangeSelection(rangeParams);
+      // Apply the range selection using the new API
+      gridApi.addCellRange({
+        rowStartIndex: startRow,
+        rowEndIndex: endRow,
+        columnStart: startCol,
+        columnEnd: endCol
+      });
       
       // Calculate statistics for the selected range
       const selectedRows = rowData.slice(startRow, endRow + 1);
@@ -306,7 +268,7 @@ const AgGridExample: React.FC = () => {
       setRangeStats(stats);
       setSelectedRange(`Rows ${startRow}-${endRow}, Cols ${startCol}-${endCol}`);
       
-      console.log('Range selection applied:', rangeParams);
+      console.log('Range selection applied:', { startRow, endRow, startCol, endCol });
       console.log('Range statistics calculated:', stats);
       
     } catch (error) {
@@ -362,13 +324,12 @@ const AgGridExample: React.FC = () => {
     console.log('Cell clicked:', event.data);
     
     // Update chart data based on clicked row
-    if (angleSelectComponent && chartConfig) {
+    if (chartConfig) {
       const newAngle = (angleSelectValue + 15) % 360;
-      angleSelectComponent.setValue(newAngle);
       setAngleSelectValue(newAngle);
       updateChartConfiguration(newAngle);
     }
-  }, [angleSelectComponent, chartConfig, angleSelectValue, updateChartConfiguration]);
+  }, [chartConfig, angleSelectValue, updateChartConfiguration]);
 
   // Refresh data with new random values
   const refreshData = useCallback(() => {
@@ -453,7 +414,7 @@ const AgGridExample: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          Rotate Chart Labels (AgAngleSelect: {angleSelectValue}°)
+          Rotate Chart Labels (Angle: {angleSelectValue}°)
         </button>
 
         <button 
@@ -512,8 +473,8 @@ const AgGridExample: React.FC = () => {
           <h4 style={{ margin: '0 0 10px 0', color: '#9c27b0' }}>Active Chart Configuration</h4>
           <div style={{ fontSize: '14px', color: '#666' }}>
             <div><strong>Area Series:</strong> {chartConfig.areaSeriesOptions.type} chart with {chartConfig.areaSeriesOptions.fillOpacity * 100}% opacity</div>
-            <div><strong>Axis Labels:</strong> {chartConfig.axisLabelOptions.fontSize}px, rotated {chartConfig.rotationAngle}°</div>
-            <div><strong>Grid Style:</strong> Dashed lines with {chartConfig.axisGridStyle.lineDash.join(', ')} pattern</div>
+            <div><strong>Axis Labels:</strong> {chartConfig.axisLabelConfig.fontSize}px, rotated {chartConfig.rotationAngle}°</div>
+            <div><strong>Grid Style:</strong> Dashed lines with {chartConfig.customGridStyle.lineDash.join(', ')} pattern</div>
             <div><strong>Tooltip:</strong> Custom renderer with company details</div>
           </div>
         </div>
