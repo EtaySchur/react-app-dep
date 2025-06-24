@@ -32,8 +32,8 @@ export const validateForm = (values: ExtendedFormValues): FormikErrors<ExtendedF
 
 // Function to handle form submission
 export const handleSubmit = (
-  values: ExtendedFormValues, 
-  actions: FormikBag<ExtendedFormValues, ExtendedFormValues>
+  values: ExtendedFormValues,
+  actions: FormikActions<ExtendedFormValues>
 ): void => {
   // Using FormikActions (removed API) directly from formik
   setTimeout(() => {
