@@ -88,7 +88,6 @@ const advancedContentNegotiation = (req, res, next) => {
     acceptsArrayResult: acceptsArrayResult
   };
   
-  console.log(chalk.cyan(`🔧 Advanced content negotiation using deprecated APIs - Type: ${negotiatedType}`));
   next();
 };
 

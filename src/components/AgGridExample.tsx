@@ -1,24 +1,18 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
+import axios from 'axios';
 import { 
   GridApi, 
   ColumnApi,
   GridReadyEvent,
   ColDef,
-  AddRangeSelectionParams,
-  AgAngleSelect,
-  AgAreaSeriesOptions,
-  AgAxisLabelOptions,
-  AgAxisGridStyle,
-  AgAreaSeriesTooltip,
   CellClickedEvent,
-  RangeSelectionChangedEvent
+  RangeSelectionChangedEvent,
 } from 'ag-grid-community';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-// Realistic financial data for a trading dashboard
 const generateFinancialData = () => {
   const companies = [
     { symbol: 'AAPL', name: 'Apple Inc.' },
@@ -60,15 +54,68 @@ const AgGridExample: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
   const [columnApi, setColumnApi] = useState<ColumnApi | null>(null);
-  const [rowData, setRowData] = useState(generateFinancialData());
+  const [stockData, setStockData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedRange, setSelectedRange] = useState<string>('');
   const [rangeStats, setRangeStats] = useState<any>(null);
-  const [angleSelectValue, setAngleSelectValue] = useState<number>(0);
-  const [chartConfig, setChartConfig] = useState<any>(null);
-  const [angleSelectComponent, setAngleSelectComponent] = useState<AgAngleSelect | null>(null);
+
+  // Chart configuration for axis label rotation
+  const [axisLabelRotation, setAxisLabelRotation] = useState<number>(0);
+
+  // Fetch data from Express server
+  const fetchStockData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get('http://localhost:3001/api/stocks', {
+        params: {
+          count: 50,
+          sortBy: 'symbol',
+          order: 'asc'
+        }
+      });
+      
+      if (response.data && response.data.data) {
+        setStockData(response.data.data);
+        console.log('Stock data loaded from server:', response.data.data.length, 'records');
+        console.log('Server response metadata:', {
+          total: response.data.total,
+          timestamp: response.data.timestamp,
+          timezone: response.data.timezone,
+          deprecatedAPIsUsed: response.data.deprecatedAPIsUsed
+        });
+      } else {
+        throw new Error('Invalid response format from server');
+      }
+    } catch (err) {
+      console.error('Failed to fetch stock data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      // Fallback to local data if server is not available
+      setStockData(generateFinancialData());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Load data on component mount
+  useEffect(() => {
+    fetchStockData();
+  }, [fetchStockData]);
 
   // Column definitions for financial data
   const columnDefs: ColDef[] = [
+    { 
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      width: 50,
+      pinned: 'left',
+      suppressMenu: true,
+      sortable: false,
+      filter: false
+    },
     { 
       field: 'symbol', 
       headerName: 'Symbol',
@@ -119,235 +166,20 @@ const AgGridExample: React.FC = () => {
       width: 130,
       type: 'numericColumn',
       valueFormatter: (params) => (params.value / 1000000).toFixed(1) + 'M'
-    },
-    { 
-      field: 'marketCap', 
-      headerName: 'Market Cap',
-      width: 140,
-      type: 'numericColumn',
-      valueFormatter: (params) => '$' + (params.value / 1000000000).toFixed(2) + 'B'
-    },
-    { 
-      field: 'pe', 
-      headerName: 'P/E Ratio',
-      width: 100,
-      type: 'numericColumn'
-    },
-    { 
-      field: 'dividend', 
-      headerName: 'Dividend',
-      width: 100,
-      type: 'numericColumn',
-      valueFormatter: (params) => `${params.value?.toFixed(2)}%`
-    },
-    { 
-      field: 'beta', 
-      headerName: 'Beta',
-      width: 80,
-      type: 'numericColumn'
-    },
-    { 
-      field: 'sector', 
-      headerName: 'Sector',
-      width: 130,
-      filter: true
     }
   ];
-
-  useEffect(() => {
-    try {
-      const angleSelect = new AgAngleSelect();
-      setAngleSelectComponent(angleSelect);
-      
-      // Configure the angle selector for chart rotation
-      angleSelect.setRadius(50);
-      angleSelect.setValue(0);
-      
-      // Set up event listener for angle changes (affects chart rotation)
-      const handleAngleChange = () => {
-        const newValue = angleSelect.getValue();
-        setAngleSelectValue(newValue);
-        console.log('Chart rotation angle changed to:', newValue);
-        
-        // Update chart configuration when angle changes
-        updateChartConfiguration(newValue);
-      };
-      
-      // Simulate angle selector usage
-      angleSelect.setValue(45);
-      handleAngleChange();
-      
-      console.log('AgAngleSelect initialized successfully');
-      console.log('Initial radius:', angleSelect.getRadius());
-      console.log('Initial value:', angleSelect.getValue());
-      
-    } catch (error) {
-      console.error('AgAngleSelect initialization failed:', error);
-    }
-  }, []);
-
-  // Create realistic chart configuration using deprecated APIs
-  const updateChartConfiguration = useCallback((rotationAngle: number = 0) => {
-    const areaSeriesOptions: AgAreaSeriesOptions = {
-      type: 'area',
-      xKey: 'symbol',
-      yKey: 'price',
-      fill: '#2196f3',
-      stroke: '#1976d2',
-      strokeWidth: 2,
-      fillOpacity: 0.6,
-      normalizedTo: 100,
-      stacked: false,
-      marker: {
-        enabled: true,
-        size: 6,
-        fill: '#1976d2',
-        stroke: '#ffffff',
-        strokeWidth: 2
-      }
-    };
-
-    const axisLabelOptions: AgAxisLabelOptions = {
-      fontStyle: 'normal',
-      fontWeight: 'bold',
-      fontSize: 11,
-      fontFamily: 'Arial, sans-serif',
-      color: '#333333',
-      rotation: rotationAngle, // Use the angle selector value
-      autoRotate: rotationAngle === 0,
-      autoRotateAngle: 45,
-      format: undefined, // For string values
-      formatter: (params) => {
-        return `${params.value}${params.index !== undefined ? ` (${params.index})` : ''}`;
-      }
-    };
-
-    const axisGridStyle: AgAxisGridStyle = {
-      stroke: '#e1e8ed',
-      lineDash: [3, 3]
-    };
-
-    const areaSeriesTooltip: AgAreaSeriesTooltip = {
-      renderer: (params) => {
-        const data = rowData.find(row => row.symbol === params.xValue);
-        if (data) {
-          return `
-            <div style="padding: 8px; background: white; border: 1px solid #ccc; border-radius: 4px;">
-              <div style="font-weight: bold; margin-bottom: 4px;">${data.companyName}</div>
-              <div>Symbol: <strong>${data.symbol}</strong></div>
-              <div>Price: <strong>$${data.price.toFixed(2)}</strong></div>
-              <div>Change: <strong style="color: ${data.change >= 0 ? '#4caf50' : '#f44336'}">
-                ${data.change >= 0 ? '+' : ''}${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)
-              </strong></div>
-              <div>Volume: <strong>${(data.volume / 1000000).toFixed(1)}M</strong></div>
-            </div>
-          `;
-        }
-        return `<b>${params.xValue}</b>: $${params.yValue}`;
-      },
-      format: undefined // Custom renderer handles formatting
-    };
-
-    const config = {
-      areaSeriesOptions,
-      axisLabelOptions,
-      axisGridStyle,
-      areaSeriesTooltip,
-      rotationAngle
-    };
-
-    setChartConfig(config);
-
-    console.log('Chart configuration updated:');
-    console.log('- Rotation angle:', rotationAngle);
-    console.log('- AgAreaSeriesOptions:', areaSeriesOptions);
-    console.log('- AgAxisLabelOptions:', axisLabelOptions);
-    console.log('- AgAxisGridStyle:', axisGridStyle);
-    console.log('- AgAreaSeriesTooltip configured with custom renderer');
-
-    return config;
-  }, [rowData]);
-
-  // Handle range selection with real functionality
-  const handleRangeSelection = useCallback((startRow: number, endRow: number, startCol: string, endCol: string) => {
-    if (!gridApi) return;
-
-    const rangeParams: AddRangeSelectionParams = {
-      rowStart: startRow,
-      floatingStart: 'top',
-      rowEnd: endRow,
-      floatingEnd: 'top',
-      columnStart: startCol,
-      columnEnd: endCol
-    };
-
-    try {
-      // Apply the range selection
-      gridApi.addRangeSelection(rangeParams);
-      
-      // Calculate statistics for the selected range
-      const selectedRows = rowData.slice(startRow, endRow + 1);
-      const numericColumns = ['price', 'change', 'changePercent', 'volume', 'marketCap', 'pe', 'dividend', 'beta'];
-      
-      const stats: any = {};
-      numericColumns.forEach(col => {
-        const values = selectedRows.map(row => row[col as keyof typeof row] as number).filter(val => !isNaN(val));
-        if (values.length > 0) {
-          stats[col] = {
-            sum: values.reduce((a, b) => a + b, 0),
-            avg: values.reduce((a, b) => a + b, 0) / values.length,
-            min: Math.min(...values),
-            max: Math.max(...values),
-            count: values.length
-          };
-        }
-      });
-
-      setRangeStats(stats);
-      setSelectedRange(`Rows ${startRow}-${endRow}, Cols ${startCol}-${endCol}`);
-      
-      console.log('Range selection applied:', rangeParams);
-      console.log('Range statistics calculated:', stats);
-      
-    } catch (error) {
-      console.error('Range selection failed:', error);
-    }
-  }, [gridApi, rowData]);
-
-  // Predefined range selection buttons
-  const handlePriceRangeSelection = useCallback(() => {
-    handleRangeSelection(0, 4, 'symbol', 'changePercent');
-  }, [handleRangeSelection]);
-
-  const handleFullDataSelection = useCallback(() => {
-    handleRangeSelection(0, rowData.length - 1, 'symbol', 'sector');
-  }, [handleRangeSelection, rowData.length]);
-
-  const handleTopPerformersSelection = useCallback(() => {
-    // Sort by change percent and select top 3
-    const sortedData = [...rowData].sort((a, b) => b.changePercent - a.changePercent);
-    const topPerformers = sortedData.slice(0, 3);
-    const indices = topPerformers.map(performer => rowData.findIndex(row => row.id === performer.id));
-    
-    if (indices.length > 0) {
-      handleRangeSelection(Math.min(...indices), Math.max(...indices), 'symbol', 'changePercent');
-    }
-  }, [handleRangeSelection, rowData]);
 
   // Grid event handlers
   const onGridReady = useCallback((params: GridReadyEvent) => {
     setGridApi(params.api);
     setColumnApi(params.columnApi);
     
-    // Initialize chart configuration
-    updateChartConfiguration(angleSelectValue);
+    console.log('🎯 Grid is ready! API available.');
     
-    // Set up initial range selection
-    setTimeout(() => {
-      handlePriceRangeSelection();
-    }, 500);
+    // Don't call range selection immediately - let user click buttons
+    console.log('🎯 Grid ready - range selection buttons are now active');
     
-  }, [updateChartConfiguration, angleSelectValue, handlePriceRangeSelection]);
+  }, []);
 
   const onRangeSelectionChanged = useCallback((event: RangeSelectionChangedEvent) => {
     const ranges = gridApi?.getCellRanges();
@@ -360,29 +192,179 @@ const AgGridExample: React.FC = () => {
 
   const onCellClicked = useCallback((event: CellClickedEvent) => {
     console.log('Cell clicked:', event.data);
-    
-    // Update chart data based on clicked row
-    if (angleSelectComponent && chartConfig) {
-      const newAngle = (angleSelectValue + 15) % 360;
-      angleSelectComponent.setValue(newAngle);
-      setAngleSelectValue(newAngle);
-      updateChartConfiguration(newAngle);
-    }
-  }, [angleSelectComponent, chartConfig, angleSelectValue, updateChartConfiguration]);
-
-  // Refresh data with new random values
-  const refreshData = useCallback(() => {
-    setRowData(generateFinancialData());
   }, []);
 
+  const handleRangeSelection = useCallback((startRow: number, endRow: number, startCol: string, endCol: string) => {
+    console.log('🎯 handleRangeSelection called with:', { startRow, endRow, startCol, endCol });
+    
+    if (!gridApi || !columnApi) {
+      console.log('❌ Grid API or Column API not available yet');
+      setSelectedRange('Grid API not ready yet');
+      return;
+    }
+
+    console.log('✅ Grid API available, proceeding with range selection');
+    console.log('📊 Current row data length:', stockData.length);
+
+    try {
+      gridApi.deselectAll();
+      
+      const rowsToSelect: any[] = [];
+      for (let i = startRow; i <= endRow; i++) {
+        const rowNode = gridApi.getDisplayedRowAtIndex(i);
+        if (rowNode) {
+          rowsToSelect.push(rowNode);
+        }
+      }
+      
+      console.log('🎯 Selecting rows:', rowsToSelect.length);
+      
+      // Select the rows
+      rowsToSelect.forEach(rowNode => {
+        rowNode.setSelected(true);
+      });
+      
+      // Calculate the selection details for the stats
+      const numRows = endRow - startRow + 1;
+      const allColumns = columnApi.getAllColumns();
+      console.log('🔍 All columns:', allColumns);
+      
+      if (!allColumns) {
+        console.error('❌ Could not get all columns from columnApi');
+        setSelectedRange('Error: Could not access all columns');
+        return;
+      }
+      
+      const startColIndex = allColumns.findIndex(col => col.getColId() === startCol);
+      const endColIndex = allColumns.findIndex(col => col.getColId() === endCol);
+      const numCols = endColIndex - startColIndex + 1;
+      const totalCells = numRows * numCols;
+      
+      console.log('✅ Selection simulation successful:', {
+        numRows,
+        numCols,
+        totalCells,
+        startColIndex,
+        endColIndex
+      });
+      
+      // Focus on the first cell of the selection
+      const firstRowNode = gridApi.getDisplayedRowAtIndex(startRow);
+      if (firstRowNode) {
+        gridApi.setFocusedCell(startRow, startCol);
+        console.log('🎯 Focused on first cell:', { row: startRow, col: startCol });
+      }
+      
+      // Update the stats
+      const selectedData = rowsToSelect.map(node => node.data);
+      const stats = calculateRangeStats(selectedData, startCol, endCol);
+      setRangeStats(stats);
+      
+      // Set the selection message
+      setSelectedRange(`Selected ${numRows} rows × ${numCols} columns (${totalCells} cells) - Community Edition using row selection`);
+      
+      console.log('✅ Range selection simulation completed successfully');
+      
+    } catch (error) {
+      console.error('❌ Error applying range selection:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setSelectedRange('Error applying range selection: ' + errorMessage);
+      setRangeStats(null);
+    }
+  }, [gridApi, columnApi, stockData]);
+
+  // Calculate statistics for the selected range
+  const calculateRangeStats = (selectedData: any[], startCol: string, endCol: string) => {
+    if (!selectedData.length) return null;
+    
+    const columns = ['symbol', 'companyName', 'price', 'change', 'changePercent', 'volume'];
+    const startColIndex = columns.indexOf(startCol);
+    const endColIndex = columns.indexOf(endCol);
+    const selectedColumns = columns.slice(startColIndex, endColIndex + 1);
+    
+    // Calculate stats for numeric columns
+    const numericColumns = ['price', 'change', 'changePercent', 'volume'];
+    const stats: any = {};
+    
+    selectedColumns.forEach(col => {
+      if (numericColumns.includes(col)) {
+        const values = selectedData.map(row => parseFloat(row[col])).filter(val => !isNaN(val));
+        if (values.length > 0) {
+          stats[col] = {
+            min: Math.min(...values),
+            max: Math.max(...values),
+            avg: values.reduce((a, b) => a + b, 0) / values.length,
+            sum: values.reduce((a, b) => a + b, 0)
+          };
+        }
+      }
+    });
+    
+    return {
+      rowCount: selectedData.length,
+      columnCount: selectedColumns.length,
+      totalCells: selectedData.length * selectedColumns.length,
+      columns: selectedColumns,
+      stats
+    };
+  };
+
+  // Predefined range selection buttons
+  const handlePriceRangeSelection = useCallback(() => {
+    // Select first 5 rows, from Symbol to Price columns (3 columns, 5 rows = 15 cells)
+    handleRangeSelection(0, 4, 'symbol', 'price');
+  }, [handleRangeSelection]);
+
+  const handleFullDataSelection = useCallback(() => {
+    // Select first 10 rows, all visible columns (6 columns, 10 rows = 60 cells)
+    handleRangeSelection(0, 9, 'symbol', 'changePercent');
+  }, [handleRangeSelection]);
+
+  const handleTopPerformersSelection = useCallback(() => {
+    // Select first 3 rows, all columns (6 columns, 3 rows = 18 cells)
+    handleRangeSelection(0, 2, 'symbol', 'changePercent');
+  }, [handleRangeSelection]);
+
+  // Refresh data from server
+  const refreshData = useCallback(() => {
+    fetchStockData();
+  }, [fetchStockData]);
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
+    <div style={{ padding: '20px', maxWidth: '1800px', margin: '0 auto' }}>
       <div style={{ marginBottom: '20px' }}>
         <h2 style={{ color: '#1976d2', marginBottom: '10px' }}>Financial Dashboard - AG Grid Legacy APIs Demo</h2>
-        <p style={{ color: '#666', marginBottom: '20px' }}>
-          This dashboard demonstrates real usage of deprecated AG Grid APIs that will be removed in v31.3.4.
-          All functionality uses the legacy APIs and would break without proper migration.
-        </p>
+       
+        
+        {/* Loading and Error States */}
+        {loading && (
+          <div style={{ 
+            padding: '15px', 
+            backgroundColor: '#fff3cd', 
+            border: '1px solid #ffeaa7',
+            borderRadius: '4px',
+            marginBottom: '20px',
+            color: '#856404'
+          }}>
+            <div data-testid="loading-indicator">Loading stock data from server...</div>
+          </div>
+        )}
+        
+        {error && (
+          <div style={{ 
+            padding: '15px', 
+            backgroundColor: '#f8d7da', 
+            border: '1px solid #f5c6cb',
+            borderRadius: '4px',
+            marginBottom: '20px',
+            color: '#721c24'
+          }}>
+            <div data-testid="error-message">Error: {error}</div>
+            <div style={{ fontSize: '12px', marginTop: '5px' }}>
+              Using fallback data. Make sure the Express server is running on port 3001.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Control Panel */}
@@ -408,7 +390,7 @@ const AgGridExample: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          Select Price Range (Uses AddRangeSelectionParams)
+          📊 Select 5 Rows × 3 Cols (15 cells)
         </button>
         
         <button 
@@ -423,7 +405,7 @@ const AgGridExample: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          Select Top Performers
+          🎯 Select 3 Rows × 6 Cols (18 cells)
         </button>
 
         <button 
@@ -438,24 +420,9 @@ const AgGridExample: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          Select All Data
+          🔥 Select 10 Rows × 6 Cols (60 cells)
         </button>
         
-        <button 
-          onClick={() => updateChartConfiguration((angleSelectValue + 45) % 360)}
-          style={{ 
-            padding: '8px 16px',
-            backgroundColor: '#9c27b0',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}
-        >
-          Rotate Chart Labels (AgAngleSelect: {angleSelectValue}°)
-        </button>
-
         <button 
           onClick={refreshData}
           style={{ 
@@ -472,53 +439,6 @@ const AgGridExample: React.FC = () => {
         </button>
       </div>
 
-      {/* Stats Panel */}
-      {selectedRange && (
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '15px', 
-          backgroundColor: '#e3f2fd', 
-          borderRadius: '8px',
-          border: '1px solid #1976d2'
-        }}>
-          <h4 style={{ margin: '0 0 10px 0', color: '#1976d2' }}>Range Selection Stats: {selectedRange}</h4>
-          {rangeStats && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-              {Object.entries(rangeStats).map(([key, stats]: [string, any]) => (
-                <div key={key} style={{ backgroundColor: 'white', padding: '10px', borderRadius: '4px' }}>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px', textTransform: 'capitalize' }}>{key}</div>
-                  <div style={{ fontSize: '12px', color: '#666' }}>
-                    <div>Avg: {stats.avg.toFixed(2)}</div>
-                    <div>Min: {stats.min.toFixed(2)}</div>
-                    <div>Max: {stats.max.toFixed(2)}</div>
-                    <div>Sum: {stats.sum.toFixed(2)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Chart Configuration Display */}
-      {chartConfig && (
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '15px', 
-          backgroundColor: '#f3e5f5', 
-          borderRadius: '8px',
-          border: '1px solid #9c27b0'
-        }}>
-          <h4 style={{ margin: '0 0 10px 0', color: '#9c27b0' }}>Active Chart Configuration</h4>
-          <div style={{ fontSize: '14px', color: '#666' }}>
-            <div><strong>Area Series:</strong> {chartConfig.areaSeriesOptions.type} chart with {chartConfig.areaSeriesOptions.fillOpacity * 100}% opacity</div>
-            <div><strong>Axis Labels:</strong> {chartConfig.axisLabelOptions.fontSize}px, rotated {chartConfig.rotationAngle}°</div>
-            <div><strong>Grid Style:</strong> Dashed lines with {chartConfig.axisGridStyle.lineDash.join(', ')} pattern</div>
-            <div><strong>Tooltip:</strong> Custom renderer with company details</div>
-          </div>
-        </div>
-      )}
-
       {/* The AG Grid */}
       <div 
         className="ag-theme-alpine" 
@@ -532,27 +452,24 @@ const AgGridExample: React.FC = () => {
       >
         <AgGridReact
           ref={gridRef}
-          rowData={rowData}
+          rowData={stockData}
           columnDefs={columnDefs}
           defaultColDef={{
-            flex: 1,
-            minWidth: 80,
-            resizable: true,
             sortable: true,
             filter: true,
+            resizable: true,
+            minWidth: 100,
           }}
-          rowSelection="multiple"
           onGridReady={onGridReady}
           onRangeSelectionChanged={onRangeSelectionChanged}
           onCellClicked={onCellClicked}
-          enableRangeSelection={true}
-          enableCharts={true}
+          rowSelection="multiple"
+          suppressRowClickSelection={false}
+          enableRangeSelection={false}
           animateRows={true}
-          suppressRowClickSelection={true}
-          rowMultiSelectWithClick={true}
-          groupSelectsChildren={true}
-          paginationAutoPageSize={true}
-          pagination={false}
+          pagination={true}
+          paginationPageSize={20}
+          domLayout="normal"
         />
       </div>
     </div>
