@@ -8,7 +8,6 @@ import {
   ColDef,
   CellClickedEvent,
   RangeSelectionChangedEvent,
-  ColumnUtils,
 } from 'ag-grid-community';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
