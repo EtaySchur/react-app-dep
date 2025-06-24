@@ -6,10 +6,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: process.env.CI ? 'github' : 'html',
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+    video: process.env.CI ? 'retain-on-failure' : 'off',
+    screenshot: 'only-on-failure',
   },
   projects: [
     {
@@ -17,9 +19,12 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-  },
+  // Only use webServer in local development, not in CI
+  ...(!process.env.CI && {
+    webServer: {
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true,
+    },
+  }),
 }); 
