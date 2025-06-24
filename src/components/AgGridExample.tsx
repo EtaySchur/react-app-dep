@@ -10,8 +10,8 @@ import {
   RangeSelectionChangedEvent,
 } from 'ag-grid-community';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 const generateFinancialData = () => {
   const companies = [
@@ -59,6 +59,7 @@ const AgGridExample: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedRange, setSelectedRange] = useState<string>('');
   const [rangeStats, setRangeStats] = useState<any>(null);
+  const [isCompanyColumnVisible, setIsCompanyColumnVisible] = useState<boolean>(true);
 
   // Chart configuration for axis label rotation
   const [axisLabelRotation, setAxisLabelRotation] = useState<number>(0);
@@ -84,7 +85,6 @@ const AgGridExample: React.FC = () => {
           total: response.data.total,
           timestamp: response.data.timestamp,
           timezone: response.data.timezone,
-          deprecatedAPIsUsed: response.data.deprecatedAPIsUsed
         });
       } else {
         throw new Error('Invalid response format from server');
@@ -330,6 +330,26 @@ const AgGridExample: React.FC = () => {
     fetchStockData();
   }, [fetchStockData]);
 
+  // Hide/Show Company column using hideColumn API
+  const toggleCompanyColumn = useCallback(() => {
+    if (!columnApi) {
+      console.warn('Column API not available yet');
+      return;
+    }
+    
+    if (isCompanyColumnVisible) {
+      console.log('Hiding company column using hideColumn API');
+      // Use the hideColumn method
+      columnApi.hideColumn('companyName', true);
+      setIsCompanyColumnVisible(false);
+    } else {
+      console.log('Showing company column using hideColumn API');
+      // Use hideColumn with false to show the column
+      columnApi.hideColumn('companyName', false);
+      setIsCompanyColumnVisible(true);
+    }
+  }, [columnApi, isCompanyColumnVisible]);
+
   return (
     <div style={{ padding: '20px', maxWidth: '1800px', margin: '0 auto' }}>
       <div style={{ marginBottom: '20px' }}>
@@ -436,6 +456,22 @@ const AgGridExample: React.FC = () => {
           }}
         >
           Refresh Data
+        </button>
+
+        <button 
+          onClick={toggleCompanyColumn}
+          style={{ 
+            padding: '8px 16px',
+            backgroundColor: isCompanyColumnVisible ? '#e91e63' : '#9c27b0',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+          data-testid="toggle-company-column"
+        >
+          {isCompanyColumnVisible ? '🫥 Hide Company' : '👁️ Show Company'}
         </button>
       </div>
 

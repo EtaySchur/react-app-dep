@@ -283,4 +283,43 @@ test.describe('AG Grid Tests', () => {
     
     console.log('✅ All 10 rows validated with proper AG Grid selectors!');
   });
+
+  test('should hide and show company column using hideColumn API', async ({ page }) => {
+    await page.goto('/ag-grid');
+    
+    // Wait for grid to load
+    await expect(page.locator('.ag-root-wrapper')).toBeVisible();
+    await expect(page.locator('.ag-center-cols-container .ag-row')).toHaveCount(20, { timeout: 10000 });
+    
+    // Verify company column is initially visible
+    await expect(page.locator('.ag-header-cell[col-id="companyName"]')).toBeVisible();
+    await expect(page.locator('.ag-cell[col-id="companyName"]').first()).toBeVisible();
+    
+    // Check the hide/show button is present
+    const toggleButton = page.getByTestId('toggle-company-column');
+    await expect(toggleButton).toBeVisible();
+    await expect(toggleButton).toContainText('🫥 Hide Company');
+    
+    // Click to hide the company column using hideColumn API
+    await toggleButton.click();
+    
+    // Verify column is hidden
+    await expect(page.locator('.ag-header-cell[col-id="companyName"]')).not.toBeVisible();
+    await expect(page.locator('.ag-cell[col-id="companyName"]')).not.toBeVisible();
+    
+    // Verify button text changed
+    await expect(toggleButton).toContainText('👁️ Show Company');
+    
+    // Click to show the company column again using hideColumn API
+    await toggleButton.click();
+    
+    // Verify column is visible again
+    await expect(page.locator('.ag-header-cell[col-id="companyName"]')).toBeVisible();
+    await expect(page.locator('.ag-cell[col-id="companyName"]').first()).toBeVisible();
+    
+    // Verify button text changed back
+    await expect(toggleButton).toContainText('🫥 Hide Company');
+    
+    console.log('✅ Column hide/show functionality using hideColumn API verified!');
+  });
 }); 
