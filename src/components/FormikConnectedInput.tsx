@@ -42,6 +42,6 @@ class FormikConnectedInputBase extends React.Component<ConnectedComponentProps> 
 }
 
 // Connect the component with formik
-const FormikConnectedInput = connect<BaseComponentProps, ExtendedFormValues>(FormikConnectedInputBase);
+const FormikConnectedInput = connect<BaseComponentProps, FormikContextType<ExtendedFormValues>>(FormikConnectedInputBase);
 
 export default FormikConnectedInput; 
