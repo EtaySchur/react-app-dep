@@ -3,7 +3,6 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import { 
   GridApi, 
-  ColumnApi,
   GridReadyEvent,
   ColDef,
   CellClickedEvent,
@@ -53,7 +52,6 @@ const generateFinancialData = () => {
 const AgGridExample: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
-  const [columnApi, setColumnApi] = useState<ColumnApi | null>(null);
   const [stockData, setStockData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +110,7 @@ const AgGridExample: React.FC = () => {
       headerCheckboxSelection: true,
       width: 50,
       pinned: 'left',
-      suppressMenu: true,
+      suppressHeaderMenuButton: true,
       sortable: false,
       filter: false
     },
@@ -172,8 +170,6 @@ const AgGridExample: React.FC = () => {
   // Grid event handlers
   const onGridReady = useCallback((params: GridReadyEvent) => {
     setGridApi(params.api);
-    setColumnApi(params.columnApi);
-    
     console.log('🎯 Grid is ready! API available.');
     
     // Don't call range selection immediately - let user click buttons
@@ -197,7 +193,7 @@ const AgGridExample: React.FC = () => {
   const handleRangeSelection = useCallback((startRow: number, endRow: number, startCol: string, endCol: string) => {
     console.log('🎯 handleRangeSelection called with:', { startRow, endRow, startCol, endCol });
     
-    if (!gridApi || !columnApi) {
+    if (!gridApi) {
       console.log('❌ Grid API or Column API not available yet');
       setSelectedRange('Grid API not ready yet');
       return;
@@ -226,7 +222,7 @@ const AgGridExample: React.FC = () => {
       
       // Calculate the selection details for the stats
       const numRows = endRow - startRow + 1;
-      const allColumns = columnApi.getAllColumns();
+      const allColumns = gridApi.getColumns();
       console.log('🔍 All columns:', allColumns);
       
       if (!allColumns) {
@@ -271,7 +267,7 @@ const AgGridExample: React.FC = () => {
       setSelectedRange('Error applying range selection: ' + errorMessage);
       setRangeStats(null);
     }
-  }, [gridApi, columnApi, stockData]);
+  }, [gridApi, stockData]);
 
   // Calculate statistics for the selected range
   const calculateRangeStats = (selectedData: any[], startCol: string, endCol: string) => {
@@ -332,23 +328,23 @@ const AgGridExample: React.FC = () => {
 
   // Hide/Show Company column using hideColumn API
   const toggleCompanyColumn = useCallback(() => {
-    if (!columnApi) {
-      console.warn('Column API not available yet');
+    if (!gridApi) {
+      console.warn('Grid API not available yet');
       return;
     }
-    
+
     if (isCompanyColumnVisible) {
       console.log('Hiding company column using hideColumn API');
       // Use the hideColumn method
-      columnApi.hideColumn('companyName', true);
+      gridApi?.setColumnsVisible(['companyName'], true);
       setIsCompanyColumnVisible(false);
     } else {
       console.log('Showing company column using hideColumn API');
       // Use hideColumn with false to show the column
-      columnApi.hideColumn('companyName', false);
+      gridApi.setColumnsVisible(['companyName'], false);
       setIsCompanyColumnVisible(true);
     }
-  }, [columnApi, isCompanyColumnVisible]);
+  }, [isCompanyColumnVisible]);
 
   return (
     <div style={{ padding: '20px', maxWidth: '1800px', margin: '0 auto' }}>
