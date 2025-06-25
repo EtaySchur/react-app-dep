@@ -7,10 +7,15 @@ import {
   ColDef,
   CellClickedEvent,
   RangeSelectionChangedEvent,
+  ModuleRegistry,
+  AllCommunityModule
 } from 'ag-grid-community';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+// Register AG Grid modules (required for v28+)
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const generateFinancialData = () => {
   const companies = [
@@ -326,7 +331,7 @@ const AgGridExample: React.FC = () => {
     fetchStockData();
   }, [fetchStockData]);
 
-  // Hide/Show Company column using hideColumn API
+  // Hide/Show Company column using setColumnsVisible API
   const toggleCompanyColumn = useCallback(() => {
     if (!gridApi) {
       console.warn('Grid API not available yet');
@@ -334,17 +339,17 @@ const AgGridExample: React.FC = () => {
     }
 
     if (isCompanyColumnVisible) {
-      console.log('Hiding company column using hideColumn API');
-      // Use the hideColumn method
-      gridApi?.setColumnsVisible(['companyName'], true);
+      console.log('Hiding company column using setColumnsVisible API');
+      // Use setColumnsVisible with false to hide the column
+      gridApi.setColumnsVisible(['companyName'], false);
       setIsCompanyColumnVisible(false);
     } else {
-      console.log('Showing company column using hideColumn API');
-      // Use hideColumn with false to show the column
-      gridApi.setColumnsVisible(['companyName'], false);
+      console.log('Showing company column using setColumnsVisible API');
+      // Use setColumnsVisible with true to show the column
+      gridApi.setColumnsVisible(['companyName'], true);
       setIsCompanyColumnVisible(true);
     }
-  }, [isCompanyColumnVisible]);
+  }, [gridApi, isCompanyColumnVisible]);
 
   return (
     <div style={{ padding: '20px', maxWidth: '1800px', margin: '0 auto' }}>
