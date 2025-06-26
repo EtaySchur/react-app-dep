@@ -10,19 +10,22 @@ interface CustomFastFieldProps extends FieldConfig<any> {
 
 // Now we can properly use FastFieldConfig with our extended props
 const CustomFastField = (props: CustomFastFieldProps) => {
-  // Explicitly using FastFieldConfig for shouldUpdate (a feature of FastFieldConfig)
+  // Explicitly using FieldConfig for validate
   const { name, validate, ...inputProps } = props;
-  const fastFieldProps: FastFieldConfig<any> = {
+  const fieldProps: FieldConfig<any> = {
     name,
-    validate,
-    shouldUpdate: (nextProps: any, currentProps: any) => {
-      // Custom implementation of shouldUpdate - only update if the name changes
-      return nextProps.name !== currentProps.name;
-    }
+    validate
   };
   
-  // Return FastField with both the original props and the FastFieldConfig props
-  return <FastField {...inputProps} {...fastFieldProps} />;
+  // Return FastField with both the original props, the FieldConfig props, and shouldUpdate
+  return <FastField 
+    {...inputProps} 
+    {...fieldProps} 
+    shouldUpdate={(nextProps: any, currentProps: any) => {
+      // Custom implementation of shouldUpdate - only update if the name changes
+      return nextProps.name !== currentProps.name;
+    }}
+  />;
 };
 
 export default CustomFastField; 
