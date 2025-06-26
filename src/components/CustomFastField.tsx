@@ -13,8 +13,6 @@ const CustomFastField = (props: CustomFastFieldProps) => {
   // Explicitly using FastFieldConfig for shouldUpdate (a feature of FastFieldConfig)
   const { name, validate, ...inputProps } = props;
   const fastFieldProps: FastFieldConfig<any> = {
-    name,
-    validate,
     shouldUpdate: (nextProps: any, currentProps: any) => {
       // Custom implementation of shouldUpdate - only update if the name changes
       return nextProps.name !== currentProps.name;
@@ -22,7 +20,7 @@ const CustomFastField = (props: CustomFastFieldProps) => {
   };
   
   // Return FastField with both the original props and the FastFieldConfig props
-  return <FastField {...inputProps} {...fastFieldProps} />;
+  return <FastField name={name} validate={validate} {...inputProps} {...fastFieldProps} />;
 };
 
 export default CustomFastField; 
