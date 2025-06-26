@@ -9,7 +9,8 @@ const mockProgressEvent: AxiosProgressEvent = {
   estimated: 1,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: true
 };
 
 const createTestProgressEvent = (loaded: number, total: number): AxiosProgressEvent => ({
