@@ -207,7 +207,7 @@ const AgGridExample: React.FC = () => {
     console.log('📊 Current row data length:', stockData.length);
 
     try {
-      gridApi.deselectAll();
+      gridApi.deselectAll('apiSelectAll');
       
       const rowsToSelect: any[] = [];
       for (let i = startRow; i <= endRow; i++) {
@@ -226,7 +226,7 @@ const AgGridExample: React.FC = () => {
       
       // Calculate the selection details for the stats
       const numRows = endRow - startRow + 1;
-      const allColumns = columnApi.getAllColumns();
+      const allColumns = columnApi.getColumns();
       console.log('🔍 All columns:', allColumns);
       
       if (!allColumns) {
@@ -340,12 +340,12 @@ const AgGridExample: React.FC = () => {
     if (isCompanyColumnVisible) {
       console.log('Hiding company column using hideColumn API');
       // Use the hideColumn method
-      columnApi.hideColumn('companyName', true);
+      columnApi.setColumnVisible('companyName', !true);
       setIsCompanyColumnVisible(false);
     } else {
       console.log('Showing company column using hideColumn API');
       // Use hideColumn with false to show the column
-      columnApi.hideColumn('companyName', false);
+      columnApi.setColumnVisible('companyName', !false);
       setIsCompanyColumnVisible(true);
     }
   }, [columnApi, isCompanyColumnVisible]);
