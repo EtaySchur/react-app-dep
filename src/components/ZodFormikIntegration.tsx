@@ -143,7 +143,7 @@ const ZodFormikIntegration: React.FC = () => {
             }
           }}
         >
-          {({ isSubmitting, values, setFieldValue }) => (
+          {(formik) => (
             <Form>
               <div style={{ marginBottom: '15px' }}>
                 <label htmlFor="name" style={{ display: 'block', marginBottom: '5px' }}>Name:</label>
@@ -199,15 +199,15 @@ const ZodFormikIntegration: React.FC = () => {
 
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '5px' }}>Tags (2-5 required):</label>
-                {values.tags.map((tag, index) => (
+                {formik.values.tags.map((tag, index) => (
                   <div key={index} style={{ display: 'flex', marginBottom: '5px' }}>
                     <input
                       type="text"
                       value={tag}
                       onChange={(e) => {
-                        const newTags = [...values.tags];
+                        const newTags = [...formik.values.tags];
                         newTags[index] = e.target.value;
-                        setFieldValue('tags', newTags);
+                        formik.setFieldValue('tags', newTags);
                       }}
                       style={{ flex: 1, padding: '8px', border: '1px solid #ccc', marginRight: '8px' }}
                       placeholder={`Tag ${index + 1}`}
@@ -216,8 +216,8 @@ const ZodFormikIntegration: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          const newTags = values.tags.filter((_, i) => i !== index);
-                          setFieldValue('tags', newTags);
+                          const newTags = formik.values.tags.filter((_, i) => i !== index);
+                          formik.setFieldValue('tags', newTags);
                         }}
                         style={{ padding: '8px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
                       >
@@ -228,7 +228,7 @@ const ZodFormikIntegration: React.FC = () => {
                 ))}
                 <button
                   type="button"
-                  onClick={() => setFieldValue('tags', [...values.tags, ''])}
+                  onClick={() => formik.setFieldValue('tags', [...formik.values.tags, ''])}
                   style={{ padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', marginTop: '5px' }}
                 >
                   Add Tag
@@ -240,7 +240,7 @@ const ZodFormikIntegration: React.FC = () => {
 
               <button 
                 type="submit" 
-                disabled={isSubmitting}
+                disabled={formik.isSubmitting}
                 style={{ 
                   padding: '10px 20px', 
                   backgroundColor: '#007bff', 
