@@ -38,7 +38,7 @@ export const handleSubmit = (
   // Using FormikActions (removed API) directly from formik
   setTimeout(() => {
     alert(JSON.stringify(values, null, 2));
-    actions.setSubmitting(false);
+    actions.setStatus({ isSubmitting: false });
   }, 1000);
 };
 
