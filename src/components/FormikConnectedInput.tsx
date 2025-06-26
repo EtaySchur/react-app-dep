@@ -15,30 +15,26 @@ interface ConnectedComponentProps extends BaseComponentProps {
 }
 
 // Create the base component
-class FormikConnectedInputBase extends React.Component<ConnectedComponentProps> {
-  render() {
-    const { label, name, formik } = this.props;
-    
-    return (
-      <div>
-        <label htmlFor={name}>{label}:</label>
-        <input
-          id={name}
-          name={name}
-          type="text"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values[name as keyof ExtendedFormValues] as string}
+const FormikConnectedInputBase: React.FC<ConnectedComponentProps> = ({ label, name, formik }) => {
+  return (
+    <div>
+      <label htmlFor={name}>{label}:</label>
+      <input
+        id={name}
+        name={name}
+        type="text"
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        value={formik.values[name as keyof ExtendedFormValues] as string}
+      />
+      {formik.errors[name as keyof ExtendedFormValues] && 
+       formik.touched[name as keyof ExtendedFormValues] && (
+        <ErrorDisplay 
+          message={formik.errors[name as keyof ExtendedFormValues] as string} 
         />
-        {formik.errors[name as keyof ExtendedFormValues] && 
-         formik.touched[name as keyof ExtendedFormValues] && (
-          <ErrorDisplay 
-            message={formik.errors[name as keyof ExtendedFormValues] as string} 
-          />
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
 
 // Connect the component with formik

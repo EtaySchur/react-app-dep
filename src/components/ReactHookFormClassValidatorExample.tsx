@@ -59,8 +59,8 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     criteriaMode: 'firstError'
   };
 
-  const formMethods: UseFormMethods<UserFormData> = useForm(formOptions);
-  const { register, handleSubmit, errors, formState, reset, getValues, setValue, trigger } = formMethods;
+  const formMethods = useForm<UserFormData>(formOptions);
+  const { register, handleSubmit, formState: { errors, dirtyFields, touched }, reset, getValues, setValue, trigger } = formMethods;
 
   const controllerOptions: UseControllerOptions<UserFormData> = {
     name: 'name',
@@ -70,17 +70,15 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
   };
 
   const handleFormReset = () => {
-    const omitResetState: OmitResetState = {
-      errors: false,
-      isDirty: true,
-      isSubmitted: true,
-      touched: false,
-      isValid: false,
-      submitCount: false,
-      dirtyFields: true
-    };
-    
-    reset(undefined, omitResetState);
+    reset(undefined, {
+      keepErrors: false,
+      keepDirty: true,
+      keepIsSubmitted: true,
+      keepTouched: false,
+      keepIsValid: false,
+      keepSubmitCount: false,
+      keepDirtyValues: true
+    });
   };
 
   const handleValidationWithClassValidator = async () => {
@@ -91,10 +89,10 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     user.validFromDate = new Date('1950-01-01');
 
     // Use individual validation functions (breaking changes)
-    const isAlphaResult = IsAlpha('en-US' as any);
-    const isAlphanumericResult = IsAlphanumeric('en-US' as any);
-    const maxDateResult = MaxDate(new Date() as any);
-    const minDateResult = MinDate(new Date('1900-01-01') as any);
+    const isAlphaResult = IsAlpha(user.name, 'en-US' as any);
+    const isAlphanumericResult = IsAlphanumeric(user.username, 'en-US' as any);
+    const maxDateResult = MaxDate(user.birthDate, new Date() as any);
+    const minDateResult = MinDate(user.birthDate, new Date('1900-01-01') as any);
     
     console.log('Individual validators (breaking APIs):', {
       isAlphaResult,
@@ -108,7 +106,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
     if (validationErrors.length > 0) {
       setValidationErrors(validationErrors);
       validationErrors.forEach((error: ValidationError) => {
-        const errorMessage = error.toString(true, false, '');
+        const errorMessage = error.toString();
         console.log('Validation error (old signature):', errorMessage);
       });
     }
@@ -120,7 +118,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
       if (Array.isArray(errors)) {
         setValidationErrors(errors as ValidationError[]);
         errors.forEach((error: ValidationError) => {
-          const errorMessage = error.toString(true, false, '');
+          const errorMessage = error.toString();
           console.log('Validation error (old signature):', errorMessage);
         });
       }
@@ -243,8 +241,8 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
   const getInputState = (fieldName: keyof UserFormData): InputState => {
     return {
       invalid: !!errors[fieldName],
-      isTouched: !!formState.touched[fieldName],
-      isDirty: !!formState.dirtyFields[fieldName]
+      isTouched: !!touched[fieldName],
+      isDirty: !!dirtyFields[fieldName]
     };
   };
 
@@ -257,8 +255,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
           </label>
           <input
             id="name"
-            name="name"
-            ref={register({ required: 'Name is required' })}
+            {...register('name', { required: 'Name is required' })}
             style={{ 
               width: '100%', 
               padding: '8px',
@@ -278,9 +275,8 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
           </label>
           <input
             id="email"
-            name="email"
             type="email"
-            ref={register({ required: 'Email is required' })}
+            {...register('email', { required: 'Email is required' })}
             style={{ 
               width: '100%', 
               padding: '8px',
@@ -299,7 +295,7 @@ const ReactHookFormClassValidatorExample: React.FC = () => {
             id="birthDate"
             name="birthDate"
             type="date"
-            ref={register({ required: 'Birth date is required' })}
+            {...register('birthDate', { required: 'Birth date is required' })}
             style={{ 
               width: '100%', 
               padding: '8px',
