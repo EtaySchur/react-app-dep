@@ -1,9 +1,10 @@
 import React from 'react';
 import { FastField, FastFieldConfig } from 'formik';
+import { FieldConfig } from 'formik';
 
 // Using FastField with FastFieldConfig from formik
 // Extend FastFieldConfig with our additional HTML props
-interface CustomFastFieldProps extends FastFieldConfig<any> {
+interface CustomFastFieldProps extends FieldConfig {
   type?: string;
   placeholder?: string;
 }
@@ -12,7 +13,7 @@ interface CustomFastFieldProps extends FastFieldConfig<any> {
 const CustomFastField = (props: CustomFastFieldProps) => {
   // Explicitly using FastFieldConfig for shouldUpdate (a feature of FastFieldConfig)
   const { name, validate, ...inputProps } = props;
-  const fastFieldProps: FastFieldConfig<any> = {
+  const fastFieldProps: FieldConfig = {
     name,
     validate,
     shouldUpdate: (nextProps: any, currentProps: any) => {
