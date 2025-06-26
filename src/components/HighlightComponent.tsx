@@ -48,7 +48,7 @@ const HighlightComponent: React.FC<HighlightComponentProps> = ({
       } else {
         const langDef = hljs.getLanguage(language);
         if (langDef) {
-          result = hljs.highlight(language, code, false) as CustomHighlightResult;
+          result = hljs.highlight(code, {language}) as CustomHighlightResult;
           setDetectedLanguage(language);
           
           if ('top' in result && result.top) {
@@ -63,11 +63,10 @@ const HighlightComponent: React.FC<HighlightComponentProps> = ({
 
       setRelevance(result.relevance);
       
-      const fixedMarkup = hljs.fixMarkup(result.value);
-      setHighlightedCode(fixedMarkup);
+      setHighlightedCode(result.value);
 
       if (codeRef.current) {
-        hljs.highlightBlock(codeRef.current);
+        hljs.highlightElement(codeRef.current);
       }
 
     } catch (error) {
@@ -77,8 +76,6 @@ const HighlightComponent: React.FC<HighlightComponentProps> = ({
   }, [code, language, autoDetect]);
 
   useEffect(() => {
-    hljs.initHighlighting();
-    
     const availableLanguages = hljs.listLanguages();
     console.log('Available languages:', availableLanguages);
   }, []);
