@@ -6,12 +6,13 @@ import { FastField, FastFieldConfig } from 'formik';
 interface CustomFastFieldProps extends FastFieldConfig<any> {
   type?: string;
   placeholder?: string;
+  className?: string; // Add className as a separate property
 }
 
 // Now we can properly use FastFieldConfig with our extended props
 const CustomFastField = (props: CustomFastFieldProps) => {
   // Explicitly using FastFieldConfig for shouldUpdate (a feature of FastFieldConfig)
-  const { name, validate, ...inputProps } = props;
+  const { name, validate, className, ...inputProps } = props;
   const fastFieldProps: FastFieldConfig<any> = {
     name,
     validate,
@@ -22,7 +23,7 @@ const CustomFastField = (props: CustomFastFieldProps) => {
   };
   
   // Return FastField with both the original props and the FastFieldConfig props
-  return <FastField {...inputProps} {...fastFieldProps} />;
+  return <FastField className={className} {...inputProps} {...fastFieldProps} />;
 };
 
 export default CustomFastField; 
