@@ -151,6 +151,7 @@ const ZodFormikIntegration: React.FC = () => {
                   type="text" 
                   id="name" 
                   name="name" 
+                  as="input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="name">
@@ -164,6 +165,7 @@ const ZodFormikIntegration: React.FC = () => {
                   type="email" 
                   id="email" 
                   name="email" 
+                  as="input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="email">
@@ -177,6 +179,7 @@ const ZodFormikIntegration: React.FC = () => {
                   type="number" 
                   id="age" 
                   name="age" 
+                  as="input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="age">
@@ -190,6 +193,7 @@ const ZodFormikIntegration: React.FC = () => {
                   type="text" 
                   id="phone" 
                   name="phone" 
+                  as="input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="phone">
