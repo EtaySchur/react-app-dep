@@ -207,7 +207,7 @@ const AgGridExample: React.FC = () => {
     console.log('📊 Current row data length:', stockData.length);
 
     try {
-      gridApi.deselectAll();
+      gridApi.deselectAll(undefined);
       
       const rowsToSelect: any[] = [];
       for (let i = startRow; i <= endRow; i++) {
