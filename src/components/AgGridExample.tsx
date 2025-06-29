@@ -340,12 +340,12 @@ const AgGridExample: React.FC = () => {
     if (isCompanyColumnVisible) {
       console.log('Hiding company column using hideColumn API');
       // Use the hideColumn method
-      columnApi.hideColumn('companyName', true);
+      columnApi.setColumnVisible('companyName', !true);
       setIsCompanyColumnVisible(false);
     } else {
       console.log('Showing company column using hideColumn API');
       // Use hideColumn with false to show the column
-      columnApi.hideColumn('companyName', false);
+      columnApi.setColumnVisible('companyName', !false);
       setIsCompanyColumnVisible(true);
     }
   }, [columnApi, isCompanyColumnVisible]);
