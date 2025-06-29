@@ -45,7 +45,7 @@
     "create-react-context": "^0.3.0",
     "date-fns-tz": "^2.0.0",
     "express": "3.21.2",
-    "formik": "1.5.8",
+    "formik": "2.0.1",
     "highlight.js": "9.16.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
