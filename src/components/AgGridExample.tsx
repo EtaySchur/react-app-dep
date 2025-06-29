@@ -226,7 +226,7 @@ const AgGridExample: React.FC = () => {
       
       // Calculate the selection details for the stats
       const numRows = endRow - startRow + 1;
-      const allColumns = columnApi.getAllColumns();
+      const allColumns = columnApi.getColumns();
       console.log('🔍 All columns:', allColumns);
       
       if (!allColumns) {
