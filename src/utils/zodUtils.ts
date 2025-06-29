@@ -59,20 +59,7 @@ export const strictErrorMap = (issue: ZodIssueOptionalMessage, ctx: any) => {
   }
 };
 
-export const customOverrideErrorMap = (issue: ZodIssueOptionalMessage, ctx: any) => {
-  const overrideResult = overrideErrorMap(issue, ctx);
-  
-  switch (issue.code) {
-    case 'too_small':
-      return { message: `OVERRIDE: ${overrideResult.message} (Custom override applied)` };
-    case 'invalid_type':
-      return { message: `OVERRIDE: ${overrideResult.message} (Type mismatch detected)` };
-    case 'invalid_string':
-      return { message: `OVERRIDE: ${overrideResult.message} (Format validation failed)` };
-    default:
-      return { message: `OVERRIDE: ${overrideResult.message}` };
-  }
-};
+
 
 export const setBusinessErrorMap = () => {
   setErrorMap(businessErrorMap);
@@ -85,7 +72,32 @@ export const setStrictErrorMap = () => {
 };
 
 export const setOverrideErrorMap = () => {
-  setErrorMap(customOverrideErrorMap);
+  // Use setErrorMap to create a custom error map that demonstrates override functionality
+  // This is the proper way to use Zod's error customization system - we define our own custom messages
+  setErrorMap((issue, ctx) => {
+    // Create completely custom override messages without calling defaultErrorMap
+    // This demonstrates true override functionality
+    switch (issue.code) {
+      case 'too_small':
+        if (issue.type === 'string') {
+          return { message: `OVERRIDE: Field requires minimum ${issue.minimum} characters (Custom override applied)` };
+        } else if (issue.type === 'array') {
+          return { message: `OVERRIDE: Array requires minimum ${issue.minimum} items (Custom override applied)` };
+        }
+        return { message: `OVERRIDE: Minimum value is ${issue.minimum} (Custom override applied)` };
+      case 'invalid_type':
+        return { message: `OVERRIDE: Expected ${issue.expected}, got ${issue.received} (Type mismatch detected)` };
+      case 'invalid_string':
+        if (issue.validation === 'email') {
+          return { message: 'OVERRIDE: Invalid email format (Format validation failed)' };
+        }
+        return { message: `OVERRIDE: Invalid string format (Format validation failed)` };
+      case 'invalid_union':
+        return { message: 'OVERRIDE: Input does not match any expected types (Union validation failed)' };
+      default:
+        return { message: `OVERRIDE: Validation failed for code "${issue.code}" (Custom override applied)` };
+    }
+  });
   return { active: true, mode: 'override' };
 };
 

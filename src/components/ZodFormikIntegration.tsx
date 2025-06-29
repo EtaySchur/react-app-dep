@@ -13,8 +13,19 @@ import {
 const UserSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  age: z.number().min(18).max(120).optional(),
-  phone: z.string().min(10).optional(),
+  age: z.preprocess(
+    (val) => {
+      // Convert empty string or undefined to undefined, otherwise parse as number
+      if (val === '' || val === undefined || val === null) return undefined;
+      const num = Number(val);
+      return isNaN(num) ? val : num;
+    },
+    z.number().min(18).max(120).optional()
+  ),
+  phone: z.preprocess(
+    (val) => val === '' ? undefined : val,
+    z.string().min(10).optional()
+  ),
   tags: z.array(z.string()).min(2).max(5)
 });
 
@@ -24,6 +35,7 @@ type ErrorMapMode = 'default' | 'business' | 'strict' | 'override';
 
 const ZodFormikIntegration: React.FC = () => {
   const [errorMapMode, setErrorMapMode] = useState<ErrorMapMode>('default');
+  const [successMessage, setSuccessMessage] = useState<string>('');
 
   const handleSetDefaultErrorMap = () => {
     resetToDefaultErrorMap();
@@ -47,7 +59,12 @@ const ZodFormikIntegration: React.FC = () => {
 
   const validateForm = (values: UserFormValues) => {
     try {
-      UserSchema.parse(values);
+      // Filter out empty tags before validation to match the onSubmit logic
+      const validationValues = {
+        ...values,
+        tags: values.tags.filter(t => t.trim())
+      };
+      UserSchema.parse(validationValues);
       return {};
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -109,52 +126,57 @@ const ZodFormikIntegration: React.FC = () => {
   const arrayDefInfo = createZodArrayDefExample();
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px' }}>
-      <h2>Zod Error Map Implementation</h2>
-      
+    <div style={{ padding: '20px', maxWidth: '600px' }} data-testid="zod-formik-container">
       <div style={{ marginBottom: '20px' }}>
-        <h3>Active Mode: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{errorMapMode}</span></h3>
-        <button onClick={handleSetDefaultErrorMap} style={getButtonStyle('default')}>
+        <h3 data-testid="active-mode-title">Active Mode: <span style={{ textTransform: 'capitalize', fontWeight: 'bold' }}>{errorMapMode}</span></h3>
+        <button onClick={handleSetDefaultErrorMap} style={getButtonStyle('default')} data-testid="default-map-btn">
           Default Map
         </button>
-        <button onClick={handleSetBusinessErrorMap} style={getButtonStyle('business')}>
+        <button onClick={handleSetBusinessErrorMap} style={getButtonStyle('business')} data-testid="business-map-btn">
           Business Map
         </button>
-        <button onClick={handleSetStrictErrorMap} style={getButtonStyle('strict')}>
+        <button onClick={handleSetStrictErrorMap} style={getButtonStyle('strict')} data-testid="strict-map-btn">
           Strict Map
         </button>
-        <button onClick={handleSetOverrideErrorMap} style={getButtonStyle('override')}>
+        <button onClick={handleSetOverrideErrorMap} style={getButtonStyle('override')} data-testid="override-map-btn">
           Override Map
         </button>
       </div>
 
-      <div style={getFormStyle()}>
+      <div style={getFormStyle()} data-testid="form-container">
         <Formik
           initialValues={{ name: '', email: '', age: undefined, phone: '', tags: [''] }}
           validate={validateForm}
-          onSubmit={(values) => {
+          onSubmit={(values, { setSubmitting }) => {
             const tags = values.tags.filter(t => t.trim());
             const validation = validateWithZodArrayDef(arrayDefInfo, tags);
             
             if (validation.isValid) {
-              alert(`Form submitted with ${errorMapMode} error mapping! Tags validation: ✅ Valid (${validation.details.length} items)`);
+              setSuccessMessage(`✅ Form submitted successfully with ${errorMapMode} error mapping! Tags validation: Valid (${validation.details.length} items)`);
             } else {
-              alert(`Form submitted with ${errorMapMode} error mapping! Tags validation: ❌ Invalid - ${validation.errors.join(', ')}`);
+              setSuccessMessage(`❌ Form submitted with ${errorMapMode} error mapping! Tags validation: Invalid - ${validation.errors.join(', ')}`);
             }
+            
+            // Clear success message after 5 seconds
+            setTimeout(() => setSuccessMessage(''), 5000);
+            
+            // Re-enable the submit button
+            setSubmitting(false);
           }}
         >
           {({ isSubmitting, values, setFieldValue }) => (
-            <Form>
+            <Form data-testid="zod-form">
               <div style={{ marginBottom: '15px' }}>
                 <label htmlFor="name" style={{ display: 'block', marginBottom: '5px' }}>Name:</label>
                 <Field 
                   type="text" 
                   id="name" 
                   name="name" 
+                  data-testid="name-input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="name">
-                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>{msg}</div>}
+                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} data-testid="name-error">{msg}</div>}
                 </ErrorMessage>
               </div>
 
@@ -164,10 +186,11 @@ const ZodFormikIntegration: React.FC = () => {
                   type="email" 
                   id="email" 
                   name="email" 
+                  data-testid="email-input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="email">
-                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>{msg}</div>}
+                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} data-testid="email-error">{msg}</div>}
                 </ErrorMessage>
               </div>
 
@@ -177,10 +200,11 @@ const ZodFormikIntegration: React.FC = () => {
                   type="number" 
                   id="age" 
                   name="age" 
+                  data-testid="age-input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="age">
-                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>{msg}</div>}
+                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} data-testid="age-error">{msg}</div>}
                 </ErrorMessage>
               </div>
 
@@ -190,51 +214,57 @@ const ZodFormikIntegration: React.FC = () => {
                   type="text" 
                   id="phone" 
                   name="phone" 
+                  data-testid="phone-input"
                   style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                 />
                 <ErrorMessage name="phone">
-                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>{msg}</div>}
+                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} data-testid="phone-error">{msg}</div>}
                 </ErrorMessage>
               </div>
 
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '5px' }}>Tags (2-5 required):</label>
-                {values.tags.map((tag, index) => (
-                  <div key={index} style={{ display: 'flex', marginBottom: '5px' }}>
-                    <input
-                      type="text"
-                      value={tag}
-                      onChange={(e) => {
-                        const newTags = [...values.tags];
-                        newTags[index] = e.target.value;
-                        setFieldValue('tags', newTags);
-                      }}
-                      style={{ flex: 1, padding: '8px', border: '1px solid #ccc', marginRight: '8px' }}
-                      placeholder={`Tag ${index + 1}`}
-                    />
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newTags = values.tags.filter((_, i) => i !== index);
+                <div data-testid="tags-container">
+                  {values.tags.map((tag, index) => (
+                    <div key={index} style={{ display: 'flex', marginBottom: '5px' }} data-testid={`tag-row-${index}`}>
+                      <input
+                        type="text"
+                        value={tag}
+                        onChange={(e) => {
+                          const newTags = [...values.tags];
+                          newTags[index] = e.target.value;
                           setFieldValue('tags', newTags);
                         }}
-                        style={{ padding: '8px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                ))}
+                        style={{ flex: 1, padding: '8px', border: '1px solid #ccc', marginRight: '8px' }}
+                        placeholder={`Tag ${index + 1}`}
+                        data-testid={`tag-input-${index}`}
+                      />
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newTags = values.tags.filter((_, i) => i !== index);
+                            setFieldValue('tags', newTags);
+                          }}
+                          style={{ padding: '8px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
+                          data-testid={`remove-tag-${index}`}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
                 <button
                   type="button"
                   onClick={() => setFieldValue('tags', [...values.tags, ''])}
                   style={{ padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', marginTop: '5px' }}
+                  data-testid="add-tag-btn"
                 >
                   Add Tag
                 </button>
                 <ErrorMessage name="tags">
-                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>{msg}</div>}
+                  {msg => <div style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} data-testid="tags-error">{msg}</div>}
                 </ErrorMessage>
               </div>
 
@@ -249,6 +279,7 @@ const ZodFormikIntegration: React.FC = () => {
                   borderRadius: '4px',
                   cursor: 'pointer'
                 }}
+                data-testid="submit-btn"
               >
                 Submit Form
               </button>
@@ -257,7 +288,25 @@ const ZodFormikIntegration: React.FC = () => {
         </Formik>
       </div>
 
-      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
+      {successMessage && (
+        <div 
+          style={{ 
+            marginTop: '20px', 
+            padding: '15px', 
+            backgroundColor: successMessage.includes('✅') ? '#d4edda' : '#f8d7da',
+            color: successMessage.includes('✅') ? '#155724' : '#721c24',
+            border: `1px solid ${successMessage.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`,
+            borderRadius: '4px',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }} 
+          data-testid="success-message"
+        >
+          {successMessage}
+        </div>
+      )}
+
+      <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '4px' }} data-testid="error-map-info">
         <h4>Error Map Usage:</h4>
         <ul style={{ fontSize: '14px' }}>
           <li><strong>Default:</strong> Standard Zod error messages</li>

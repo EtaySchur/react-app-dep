@@ -42,7 +42,6 @@ export const handleSubmit = (
   }, 1000);
 };
 
-// Implementation of makeCancelable function that was removed from formik
 export const makeCancelable = <T>(promise: Promise<T>): [Promise<T>, () => void] => {
   let hasCanceled_ = false;
 

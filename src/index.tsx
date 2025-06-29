@@ -28,22 +28,22 @@ const Navigation = () => (
       <li><Link to="/safe-query">Safe Query</Link></li>
       <li><Link to="/query">Query Example</Link></li>
       <li><Link to="/formik">Formik Form</Link></li>
-      <li><Link to="/zod-formik">Zod + Formik (Removed APIs)</Link></li>
-      <li><Link to="/protected">Protected Route</Link></li>
+      <li><Link to="/zod-formik">Zod + Formik</Link></li>
+      {/* <li><Link to="/protected">Protected Route</Link></li>
       <li><Link to="/action">Action Example</Link></li>
       <li><Link to="/children">Children Function</Link></li>
       <li><Link to="/static-context">Static Context</Link></li>
       <li><Link to="/routes">Routes Example</Link></li>
       <li><Link to="/highlight">Highlight.js Legacy APIs</Link></li>
-      <li><Link to="/language-registration">Language Registration</Link></li>
+      <li><Link to="/language-registration">Language Registration</Link></li> */}
       <li><Link to="/ag-grid">AG-Grid Breaking Changes</Link></li>
       <li><Link to="/react-hook-form">React Hook Form + Class Validator</Link></li>
       <li><Link to="/live-data">Live Express API Data</Link></li>
-      <li><Link to="/comparison">API Comparison</Link></li>
+      {/* <li><Link to="/comparison">API Comparison</Link></li> */}
       <li><Link to="/react-query">React Query</Link></li>
-      <li><Link to="/zod">Zod</Link></li>
-      <li><Link to="/express">Express</Link></li>
-      <li><Link to="/api-test">API Test</Link></li>
+      {/* <li><Link to="/zod">Zod</Link></li> */}
+      {/* <li><Link to="/express">Express</Link></li>
+      <li><Link to="/api-test">API Test</Link></li> */}
     </ul>
   </div>
 );
@@ -95,17 +95,17 @@ const App = () => {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/query-advanced" component={QueryAdvancedExampleWrapper} />
-          <Route path="/safe-query" component={SafeQueryExampleWrapper} />
+          {/* <Route path="/safe-query" component={SafeQueryExampleWrapper} /> */}
           <Route path="/query" component={QueryExampleWrapper} />
           <Route path="/formik" component={FormikComplexFormWrapper} />
           <Route path="/zod-formik" component={ZodFormikIntegration} />
-          <Route path="/params/:name" component={ParameterExample} />
-          <Route path="/action" component={ActionExample} />
-          <Route path="/children" component={ChildrenExample} />
-          <Route path="/static-context" component={StaticContextExample} />
-          <Route path="/routes" component={RoutesExample} />
-          <Route path="/highlight" component={HighlightDemo} />
-          <Route path="/language-registration" component={LanguageRegistration} />
+          {/* <Route path="/params/:name" component={ParameterExample} />
+          <Route path="/action" component={ActionExample} /> */}
+          {/* <Route path="/children" component={ChildrenExample} /> */}
+          {/* <Route path="/static-context" component={StaticContextExample} /> */}
+          {/* <Route path="/routes" component={RoutesExample} /> */}
+          {/* <Route path="/highlight" component={HighlightDemo} /> */}
+          {/* <Route path="/language-registration" component={LanguageRegistration} /> */}
           <Route path="/ag-grid" component={AgGridExample} />
           <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
           <Route path="/live-data" component={LiveDataExample} />
