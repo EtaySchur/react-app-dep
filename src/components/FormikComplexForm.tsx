@@ -21,38 +21,43 @@ interface FormikComplexFormState {
 interface FormikComplexFormProps {}
 
 // Example component that demonstrates formik features
-class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikComplexFormState> {
-  constructor(props: FormikComplexFormProps) {
-    super(props);
-    
+function FormikComplexForm(props: FormikComplexFormProps): React.ReactElement {
+  // Use React hooks for state management
+  const [promiseState, setPromiseState] = React.useState<{
+    cancelablePromise: any;
+    cancel: () => void;
+    promiseResult: string | null;
+  }>(() => {
     // Example of using makeCancelable utility
     const [cancelablePromise, cancel] = makeCancelable(
       new Promise(resolve => setTimeout(() => resolve('Data loaded!'), 1000))
     );
     
-    this.state = {
+    return {
       cancelablePromise,
       cancel,
       promiseResult: null
     };
-
-    // Use the cancelable promise
-    this.state.cancelablePromise
-      .then((result: string) => this.setState({ promiseResult: result }))
+  });
+  
+  // Use the cancelable promise with useEffect
+  React.useEffect(() => {
+    promiseState.cancelablePromise
+      .then((result: string) => setPromiseState(prev => ({ ...prev, promiseResult: result })))
       .catch((err: any) => {
         if (!err.isCanceled) {
           console.error('Error in promise:', err);
         }
       });
-  }
-  
-  componentWillUnmount(): void {
-    // Cancel the promise when component unmounts
-    this.state.cancel();
-  }
+      
+    // Cleanup function (replaces componentWillUnmount)
+    return () => {
+      promiseState.cancel();
+    };
+  }, []);
   
   // Using the FormikContext type
-  renderForm(formikContext: FormikContext<ExtendedFormValues>): React.ReactElement {
+  const renderForm = (formikContext: FormikContext<ExtendedFormValues>): React.ReactElement => {
     return (
       <div>
         <h3>User Information</h3>
@@ -125,9 +130,8 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
         {/* FieldArray example */}
         <div>
           <label>Hobbies:</label>
-          <FieldArray
-            name="hobbies"
-            render={(arrayHelpers: ArrayHelpers) => (
+          <FieldArray name="hobbies">
+            {(arrayHelpers: ArrayHelpers) => (
               <div>
                 {formikContext.values.hobbies && formikContext.values.hobbies.length > 0 ? (
                   formikContext.values.hobbies.map((hobby, index) => (
@@ -156,7 +160,7 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
                 )}
               </div>
             )}
-          />
+          </FieldArray>
         </div>
         
         <div>
@@ -171,49 +175,47 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
         </button>
       </div>
     );
-  }
+  };
   
-  render(): React.ReactElement {
-    const initialValues: ExtendedFormValues = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      rememberMe: false,
-      hobbies: [''],
-      address: {
-        street: '',
-        city: '',
-        zipCode: ''
-      }
-    };
-    
-    return (
-      <div className="formik-complex-form">
-        <h2>Formik Complex Form Example</h2>
-        
-        {/* Display makeCancelable promise result */}
-        {this.state.promiseResult && (
-          <div className="promise-result">
-            Promise Result: <strong>{this.state.promiseResult}</strong>
-          </div>
+  const initialValues: ExtendedFormValues = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    rememberMe: false,
+    hobbies: [''],
+    address: {
+      street: '',
+      city: '',
+      zipCode: ''
+    }
+  };
+  
+  return (
+    <div className="formik-complex-form">
+      <h2>Formik Complex Form Example</h2>
+      
+      {/* Display makeCancelable promise result */}
+      {promiseState.promiseResult && (
+        <div className="promise-result">
+          Promise Result: <strong>{promiseState.promiseResult}</strong>
+        </div>
+      )}
+      
+      <Formik
+        initialValues={initialValues}
+        validate={validateForm}
+        onSubmit={handleSubmit}
+      >
+        {/* Use the render prop to get access to the Formik context */}
+        {formikContext => (
+          <form onSubmit={formikContext.handleSubmit}>
+            {renderForm(formikContext)}
+          </form>
         )}
-        
-        <Formik
-          initialValues={initialValues}
-          validate={validateForm}
-          onSubmit={handleSubmit}
-        >
-          {/* Use the render prop to get access to the Formik context */}
-          {formikContext => (
-            <form onSubmit={formikContext.handleSubmit}>
-              {this.renderForm(formikContext)}
-            </form>
-          )}
-        </Formik>
-      </div>
-    );
-  }
+      </Formik>
+    </div>
+  );
 }
 
 export default FormikComplexForm; 
