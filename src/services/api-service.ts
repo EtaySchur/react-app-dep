@@ -22,7 +22,8 @@ const createTestProgressEvent = (loaded: number, total: number): AxiosProgressEv
   estimated: (total - loaded) / 1000,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: true
 });
 
 class CustomProgressEvent implements AxiosProgressEvent {
