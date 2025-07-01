@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Field,
-  Formik,
-  FieldArray,
-  FormikContext,
-  ArrayHelpers
-} from 'formik';
+import { Field, Formik, FieldArray, FormikContext, ArrayHelpers, FastField } from 'formik';
 import { ExtendedFormValues } from '../types';
 import ErrorDisplay from './ErrorDisplay';
 import CustomFastField from './CustomFastField';
@@ -67,7 +61,6 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
             <ErrorDisplay message={formikContext.errors.firstName as string} />
           )}
         </div>
-
         <div>
           <label htmlFor="lastName">Last Name:</label>
           <Field
@@ -79,7 +72,6 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
             <ErrorDisplay message={formikContext.errors.lastName as string} />
           )}
         </div>
-        
         <div>
           <label htmlFor="email">Email:</label>
           <CustomFastField
@@ -101,7 +93,6 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
             <ErrorDisplay message={formikContext.errors.email as string} />
           )}
         </div>
-        
         <div>
           <label htmlFor="password">Password:</label>
           <Field
@@ -113,7 +104,6 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
             <ErrorDisplay message={formikContext.errors.password as string} />
           )}
         </div>
-
         {/* Address Section using connected component */}
         <fieldset>
           <legend>Address</legend>
@@ -121,7 +111,6 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
           <FormikConnectedInput name="address.city" label="City" />
           <FormikConnectedInput name="address.zipCode" label="Zip Code" />
         </fieldset>
-        
         {/* FieldArray example */}
         <div>
           <label>Hobbies:</label>
@@ -158,14 +147,12 @@ class FormikComplexForm extends React.Component<FormikComplexFormProps, FormikCo
             )}
           />
         </div>
-        
         <div>
           <label>
             <Field type="checkbox" name="rememberMe" />
             Remember me
           </label>
         </div>
-        
         <button type="submit" disabled={formikContext.isSubmitting}>
           {formikContext.isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
