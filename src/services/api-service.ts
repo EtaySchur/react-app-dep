@@ -89,7 +89,8 @@ const extendedProgress: AxiosProgressEvent = {
   estimated: 0.5,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: true
 };
 
 function simulateProgress(): Promise<AxiosProgressEvent> {
