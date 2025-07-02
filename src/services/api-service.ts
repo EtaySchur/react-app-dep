@@ -56,7 +56,8 @@ const fakeProgress = {
   loaded: 100,
   total: 200,
   progress: 0.5,
-  bytes: 100
+  bytes: 100,
+  lengthComputable: true
 } as AxiosProgressEvent;
 
 function logProgress(event: AxiosProgressEvent) {
