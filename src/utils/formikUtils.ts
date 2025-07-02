@@ -35,7 +35,7 @@ export const handleSubmit = (
   values: ExtendedFormValues,
   actions: FormikHelpers<ExtendedFormValues>
 ): void => {
-  // Using FormikActions (removed API) directly from formik
+  // Using FormikHelpers API from formik
   setTimeout(() => {
     alert(JSON.stringify(values, null, 2));
     actions.setSubmitting(false);
