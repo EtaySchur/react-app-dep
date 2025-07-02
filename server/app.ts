@@ -1,53 +1,14 @@
-const express = require('express');
-const utils = require('express/lib/utils');
-const chalk = require('chalk');
-const { utcToZonedTime, zonedTimeToUtc } = require('date-fns-tz');
+import express from 'express';
+import chalk from 'chalk';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+
 const app = express();
 const PORT = process.env.PORT || 3001;
-
-console.log(chalk.cyan('🔧 Express 3.x mime support:'), express.mime ? chalk.green('Available') : chalk.red('Not available'));
-
-const testAcceptsHeader = (header) => {
-  const result = utils.accepts(header);
-  console.log(chalk.green('✅ utils.accepts working:'), chalk.yellow(result));
-  return result;
-};
-
-const testAcceptsArray = (types) => {
-  const result = utils.acceptsArray(types);
-  console.log(chalk.green('✅ utils.acceptsArray working:'), chalk.yellow(result));
-  return result;
-};
-
-const createPathRegexp = (path, keys = []) => {
-  const regexp = utils.pathRegexp(path, keys, { sensitive: false, strict: false });
-  console.log(chalk.green('✅ utils.pathRegexp working for path:'), chalk.magenta(path));
-  return { regexp, keys };
-};
-
-const applyLocals = (obj) => {
-  const result = utils.locals(obj);
-  console.log(chalk.green('✅ utils.locals working'));
-  return result;
-};
-
-const parseParameters = (str) => {
-  const result = utils.parseParams(str);
-  console.log(chalk.green('✅ utils.parseParams working'));
-  return result;
-};
-
-console.log(chalk.red.bold('🚨 Initializing Express 3.x deprecated APIs...'));
-testAcceptsHeader('text/html,application/json;q=0.9');
-testAcceptsArray(['text/html', 'application/json', 'application/xml']);
-createPathRegexp('/api/users/:id', []);
-applyLocals({ title: 'Express 3.x Demo', version: '3.21.2' });
-parseParameters('charset=utf-8; boundary=something');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
+app.use((req: any, res: any, next: any) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -58,62 +19,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
-const advancedContentNegotiation = (req, res, next) => {
-  const acceptHeader = req.headers.accept || 'application/json';
-  
-  const acceptsResult = testAcceptsHeader(acceptHeader);
-  
-  const supportedTypes = ['application/json', 'text/html', 'application/xml', 'text/plain'];
-  const acceptsArrayResult = testAcceptsArray(supportedTypes);
-  
-  const acceptParts = acceptHeader.split(',');
-  let negotiatedType = 'application/json';
-  let quality = 1;
-  
-  for (const part of acceptParts) {
-    const cleanPart = part.trim();
-    if (cleanPart.includes('application/json')) {
-      const params = parseParameters(cleanPart); // THIS WILL CRASH!
-      negotiatedType = 'application/json';
-      quality = params.q || 1;
-      break;
-    }
-  }
-  
-  req.negotiatedType = { 
-    value: negotiatedType,
-    quality: quality,
-    acceptsResult: acceptsResult,
-    acceptsArrayResult: acceptsArrayResult
-  };
-  
-  next();
-};
-
-const pathMiddleware = (req, res, next) => {
-  const keys = [];
-  const patterns = [
-    '/api/stocks/:symbol',
-    '/api/users/:id',
-    '/api/analytics/:type?'
-  ];
-  
-  for (const pattern of patterns) {
-    const pathResult = createPathRegexp(pattern, keys); // THIS WILL CRASH!
-    if (pathResult && pathResult.regexp.test(req.path)) {
-      req.pathPattern = pattern;
-      req.pathKeys = pathResult.keys;
-      console.log(chalk.green(`🎯 Path matched using deprecated pathRegexp: ${pattern}`));
-      break;
-    }
-  }
-  
-  next();
-};
-
-app.use(advancedContentNegotiation);
-app.use(pathMiddleware);
 
 // Mock financial data for AG Grid component with timezone support
 const generateFinancialData = (count = 50, timezone = 'America/New_York') => {
@@ -194,7 +99,7 @@ const generateAnalyticsData = () => ({
 // API Routes
 
 // Financial data endpoints for AG Grid with timezone support
-app.get('/api/stocks', (req, res) => {
+app.get('/api/stocks', (req: any, res: any) => {
   const count = parseInt(req.query.count) || 50;
   const sector = req.query.sector;
   const timezone = req.query.timezone || 'America/New_York';
@@ -203,14 +108,14 @@ app.get('/api/stocks', (req, res) => {
   let data = generateFinancialData(count, timezone);
   
   if (sector) {
-    data = data.filter(stock => stock.sector.toLowerCase() === sector.toLowerCase());
+    data = data.filter((stock: any) => stock.sector.toLowerCase() === sector.toLowerCase());
   }
   
   // Sort by various criteria
   const sortBy = req.query.sortBy || 'symbol';
   const sortOrder = req.query.order === 'desc' ? -1 : 1;
   
-  data.sort((a, b) => {
+  data.sort((a: any, b: any) => {
     if (typeof a[sortBy] === 'string') {
       return sortOrder * a[sortBy].localeCompare(b[sortBy]);
     }
@@ -221,36 +126,28 @@ app.get('/api/stocks', (req, res) => {
   const utcNow = new Date();
   const zonedNow = utcToZonedTime(utcNow, timezone);
 
-  console.log(chalk.cyan(`GET /api/stocks - Content-Type negotiated: ${req.negotiatedType.value}`));
-  console.log(chalk.green(`🎯 Path pattern: ${req.pathPattern || 'none'}`));
-  console.log(chalk.magenta(`🕐 Timezone: ${timezone}, Zoned time: ${zonedNow.toISOString()}`));
+  console.log(chalk.cyan(`GET /api/stocks - Timezone: ${timezone}`));
+  console.log(chalk.magenta(`🕐 Zoned time: ${zonedNow.toISOString()}`));
 
   res.json({
     data,
     total: data.length,
     timestamp: utcNow.toISOString(),
     timestampZoned: zonedNow.toISOString(),
-    timezone: timezone,
-    contentType: req.negotiatedType.value,
-    deprecatedAPIsUsed: {
-      accepts: !!req.negotiatedType.acceptsResult,
-      acceptsArray: !!req.negotiatedType.acceptsArrayResult,
-      pathRegexp: !!req.pathPattern
-    }
+    timezone: timezone
   });
 });
 
 // Stock details endpoint with timezone support
-app.get('/api/stocks/:symbol', (req, res) => {
+app.get('/api/stocks/:symbol', (req: any, res: any) => {
   const symbol = req.params.symbol;
   const timezone = req.query.timezone || 'America/New_York';
-  const stock = generateFinancialData(100, timezone).find(s => s.symbol === symbol);
+  const stock = generateFinancialData(100, timezone).find((s: any) => s.symbol === symbol);
   
   if (!stock) {
     return res.status(404).json({
       error: 'Stock not found',
-      symbol: symbol,
-      contentType: req.negotiatedType.value
+      symbol: symbol
     });
   }
 
@@ -283,8 +180,6 @@ app.get('/api/stocks/:symbol', (req, res) => {
   res.json({
     ...stock,
     historical: historicalData,
-    contentType: req.negotiatedType.value,
-    pathPattern: req.pathPattern,
     timezoneConversions: {
       originalUtc: stock.lastUpdated,
       convertedToZoned: stock.lastUpdatedZoned,
@@ -295,7 +190,7 @@ app.get('/api/stocks/:symbol', (req, res) => {
 });
 
 // User management endpoints for forms
-app.get('/api/users', (req, res) => {
+app.get('/api/users', (req: any, res: any) => {
   const active = req.query.active;
   let users = [...mockUsers];
   
@@ -303,17 +198,15 @@ app.get('/api/users', (req, res) => {
     users = users.filter(user => user.active === (active === 'true'));
   }
 
-  console.log(chalk.cyan(`GET /api/users - Content-Type: ${req.negotiatedType.value}`));
+  console.log(chalk.cyan(`GET /api/users`));
 
   res.json({
     users,
-    total: users.length,
-    contentType: req.negotiatedType.value,
-    deprecatedAPIsWorking: true
+    total: users.length
   });
 });
 
-app.post('/api/users', (req, res) => {
+app.post('/api/users', (req: any, res: any) => {
   const newUser = {
     id: mockUsers.length + 1,
     name: req.body.name,
@@ -328,19 +221,17 @@ app.post('/api/users', (req, res) => {
 
   res.status(201).json({
     user: newUser,
-    message: 'User created successfully',
-    contentType: req.negotiatedType.value
+    message: 'User created successfully'
   });
 });
 
-app.put('/api/users/:id', (req, res) => {
+app.put('/api/users/:id', (req: any, res: any) => {
   const userId = parseInt(req.params.id);
   const userIndex = mockUsers.findIndex(u => u.id === userId);
   
   if (userIndex === -1) {
     return res.status(404).json({
-      error: 'User not found',
-      contentType: req.negotiatedType.value
+      error: 'User not found'
     });
   }
 
@@ -348,14 +239,12 @@ app.put('/api/users/:id', (req, res) => {
 
   res.json({
     user: mockUsers[userIndex],
-    message: 'User updated successfully',
-    contentType: req.negotiatedType.value,
-    pathPattern: req.pathPattern
+    message: 'User updated successfully'
   });
 });
 
 // Analytics endpoint for dashboard with timezone support
-app.get('/api/analytics', (req, res) => {
+app.get('/api/analytics', (req: any, res: any) => {
   const timezone = req.query.timezone || 'America/New_York';
   const data = generateAnalyticsData();
   
@@ -372,7 +261,7 @@ app.get('/api/analytics', (req, res) => {
   const businessStartUtc = zonedTimeToUtc(businessStart, timezone);
   const businessEndUtc = zonedTimeToUtc(businessEnd, timezone);
   
-  console.log(chalk.cyan(`GET /api/analytics - Content-Type: ${req.negotiatedType.value}`));
+  console.log(chalk.cyan(`GET /api/analytics`));
   console.log(chalk.magenta(`📊 Analytics timezone: ${timezone}, Business hours: ${businessStart.toTimeString()} - ${businessEnd.toTimeString()}`));
 
   res.json({
@@ -386,16 +275,15 @@ app.get('/api/analytics', (req, res) => {
       startUtc: businessStartUtc.toISOString(),
       endUtc: businessEndUtc.toISOString(),
       timezone: timezone
-    },
-    contentType: req.negotiatedType.value
+    }
   });
 });
 
 // Form validation endpoint
-app.post('/api/validate', (req, res) => {
+app.post('/api/validate', (req: any, res: any) => {
   const { field, value, rules } = req.body;
   
-  const errors = [];
+  const errors: string[] = [];
   
   if (rules.required && (!value || value.trim() === '')) {
     errors.push(`${field} is required`);
@@ -412,55 +300,35 @@ app.post('/api/validate', (req, res) => {
   res.json({
     valid: errors.length === 0,
     errors,
-    field,
-    contentType: req.negotiatedType.value
+    field
   });
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (req: any, res: any) => {
   res.json({
     status: 'healthy',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    contentType: req.negotiatedType.value,
-  });
-});
-
-app.get('/api/express-apis', (req, res) => {
-  const results = {};
-  
-  results.accepts = testAcceptsHeader(req.headers.accept || 'application/json');
-  results.acceptsArray = testAcceptsArray(['text/html', 'application/json']);
-  results.pathRegexp = createPathRegexp('/api/test/:id', []);
-  results.locals = applyLocals({ demo: true, timestamp: Date.now() });
-  results.parseParams = parseParameters('q=0.8; charset=utf-8');
-  
-  const parseAcceptResult = utils.parseAccept(req.headers.accept || 'application/json');
-  
-  res.json({
-    message: 'Express API Analysis',
+    version: '1.0.0'
   });
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
   console.error(chalk.red.bold('❌ Server error:'), chalk.red(err.message));
   res.status(500).json({
     error: 'Internal Server Error',
-    message: err.message,
-    contentType: req.negotiatedType?.value || 'application/json'
+    message: err.message
   });
 });
 
 // 404 handler
-app.use((req, res) => {
+app.use((req: any, res: any) => {
   res.status(404).json({
     error: 'Not Found',
     path: req.path,
-    method: req.method,
-    contentType: req.negotiatedType?.value || 'application/json'
+    method: req.method
   });
 });
 
@@ -468,8 +336,8 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(chalk.green.bold('\n🎉 Server Successfully Started!'));
   console.log(chalk.blue('='.repeat(50)));
-  console.log(chalk.green(`🚀 Express 4.21.0 Server running on port ${PORT}`));
-  console.log(chalk.yellow(`📦 Using chalk@4.1.0 for colorful logging`));
+  console.log(chalk.green(`🚀 Pure ESM Express 4.21.0 Server running on port ${PORT}`));
+  console.log(chalk.yellow(`📦 Using date-fns-tz for timezone-aware operations`));
   console.log(chalk.blue('='.repeat(50)));
   console.log(chalk.magenta.bold('📋 Available APIs:'));
   console.log(chalk.magenta(`  📊 Financial API: http://localhost:${PORT}/api/stocks`));
@@ -479,4 +347,4 @@ app.listen(PORT, () => {
   console.log(chalk.blue('='.repeat(50)));
 });
 
-module.exports = app; 
+export default app; 
