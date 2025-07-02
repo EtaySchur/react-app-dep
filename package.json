@@ -43,7 +43,7 @@
     "chalk": "^4.1.0",
     "class-validator": "^0.13.2",
     "create-react-context": "^0.3.0",
-    "date-fns-tz": "^2.0.0",
+    "date-fns-tz": "^3.2.0",
     "express": "3.21.2",
     "formik": "1.5.8",
     "highlight.js": "9.16.2",
