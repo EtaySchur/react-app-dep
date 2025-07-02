@@ -1,11 +1,13 @@
 import React from 'react';
-import { FastField, FastFieldConfig } from 'formik';
+import { FastFieldConfig, FieldInputProps, FieldMetaProps } from 'formik';
 
 // Using FastField with FastFieldConfig from formik
 // Extend FastFieldConfig with our additional HTML props
 interface CustomFastFieldProps extends FastFieldConfig<any> {
   type?: string;
   placeholder?: string;
+  getFieldProps: () => FieldInputProps<any>;
+  getFieldMeta: () => FieldMetaProps<any>;
 }
 
 // Now we can properly use FastFieldConfig with our extended props
