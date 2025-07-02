@@ -1,20 +1,24 @@
 import React from 'react';
-import { FastField, FastFieldConfig } from 'formik';
+import { FastFieldConfig, FieldInputProps, FieldMetaProps } from 'formik';
 
 // Using FastField with FastFieldConfig from formik
 // Extend FastFieldConfig with our additional HTML props
 interface CustomFastFieldProps extends FastFieldConfig<any> {
   type?: string;
   placeholder?: string;
+  getFieldProps: () => FieldInputProps<any>;
+  getFieldMeta: () => FieldMetaProps<any>;
 }
 
 // Now we can properly use FastFieldConfig with our extended props
 const CustomFastField = (props: CustomFastFieldProps) => {
   // Explicitly using FastFieldConfig for shouldUpdate (a feature of FastFieldConfig)
-  const { name, validate, ...inputProps } = props;
+  const { name, validate, getFieldProps, getFieldMeta, ...inputProps } = props;
   const fastFieldProps: FastFieldConfig<any> = {
     name,
     validate,
+    getFieldProps,
+    getFieldMeta,
     shouldUpdate: (nextProps: any, currentProps: any) => {
       // Custom implementation of shouldUpdate - only update if the name changes
       return nextProps.name !== currentProps.name;
