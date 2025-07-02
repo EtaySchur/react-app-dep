@@ -99,7 +99,8 @@ function simulateProgress(): Promise<AxiosProgressEvent> {
     estimated: 0,
     upload: false,
     download: true,
-    event: undefined
+    event: undefined,
+    lengthComputable: true
   });
 }
 
