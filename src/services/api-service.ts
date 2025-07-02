@@ -1,6 +1,8 @@
 import { AxiosProgressEvent } from 'axios';
 
-const mockProgressEvent: AxiosProgressEvent = {
+const mockProgressEvent: AxiosProgressEvent & {
+  lengthComputable: boolean;
+} = {
   loaded: 1024,
   total: 2048,
   progress: 0.5,
@@ -22,7 +24,8 @@ const createTestProgressEvent = (loaded: number, total: number): AxiosProgressEv
   estimated: (total - loaded) / 1000,
   upload: false,
   download: true,
-  event: undefined
+  event: undefined,
+  lengthComputable: false
 });
 
 class CustomProgressEvent implements AxiosProgressEvent {
@@ -46,7 +49,9 @@ class CustomProgressEvent implements AxiosProgressEvent {
   }
 }
 
-function processProgress({ loaded, total, progress }: AxiosProgressEvent) {
+function processProgress({ loaded, total, progress }: AxiosProgressEvent & {
+  lengthComputable: boolean;
+}) {
   const percentage = total ? (loaded / total) * 100 : 0;
   return percentage;
 }
@@ -59,7 +64,9 @@ const fakeProgress = {
   lengthComputable: true
 } as AxiosProgressEvent;
 
-function logProgress(event: AxiosProgressEvent) {
+function logProgress(event: AxiosProgressEvent & {
+  lengthComputable: boolean;
+}) {
   console.log(`Loaded: ${event.loaded}, Total: ${event.total}, Computable: ${event.lengthComputable}`);
 }
 
@@ -73,7 +80,8 @@ const progressHistory: AxiosProgressEvent[] = [
     estimated: undefined,
     upload: true,
     download: false,
-    event: undefined
+    event: undefined,
+    lengthComputable: false
   }
 ];
 
@@ -81,10 +89,13 @@ const baseProgress = {
   loaded: 50,
   total: 100,
   progress: 0.5,
-  bytes: 50
+  bytes: 50,
+  lengthComputable: false
 };
 
-const extendedProgress: AxiosProgressEvent = {
+const extendedProgress: AxiosProgressEvent & {
+  lengthComputable: boolean;
+} = {
   ...baseProgress,
   rate: 1000,
   estimated: 0.5,
