@@ -59,7 +59,7 @@ const fakeProgress = {
 } as AxiosProgressEvent;
 
 function logProgress(event: AxiosProgressEvent) {
-  console.log(`Loaded: ${event.loaded}, Total: ${event.total}`);
+  console.log(`Loaded: ${event.loaded}, Total: ${event.total}, Length Computable: ${event.lengthComputable}`);
 }
 
 const progressHistory: AxiosProgressEvent[] = [
