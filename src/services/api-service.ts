@@ -108,12 +108,12 @@ function simulateProgress(): Promise<AxiosProgressEvent> {
     lengthComputable: true
   });
 }
-}
-
 function processEvent<T extends AxiosProgressEvent>(event: T): T {
   return {
     ...event,
-    processed: true
+    processed: true,
+    lengthComputable: 'lengthComputable' in event ? event.lengthComputable : false
+  };
   } as T;
 }
 
