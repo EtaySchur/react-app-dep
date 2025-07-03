@@ -9,6 +9,7 @@ import {
   CellClickedEvent,
   RangeSelectionChangedEvent,
 } from 'ag-grid-community';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -60,9 +61,38 @@ const AgGridExample: React.FC = () => {
   const [selectedRange, setSelectedRange] = useState<string>('');
   const [rangeStats, setRangeStats] = useState<any>(null);
   const [isCompanyColumnVisible, setIsCompanyColumnVisible] = useState<boolean>(true);
+  const [selectedTimezone, setSelectedTimezone] = useState<string>('America/New_York');
 
-  // Chart configuration for axis label rotation
-  const [axisLabelRotation, setAxisLabelRotation] = useState<number>(0);
+  // Available timezones for demonstration
+  const timezones = [
+    { label: 'New York (EST/EDT)', value: 'America/New_York' },
+    { label: 'London (GMT/BST)', value: 'Europe/London' },
+    { label: 'Tokyo (JST)', value: 'Asia/Tokyo' },
+    { label: 'Sydney (AEST/AEDT)', value: 'Australia/Sydney' },
+    { label: 'Los Angeles (PST/PDT)', value: 'America/Los_Angeles' },
+    { label: 'UTC', value: 'UTC' }
+  ];
+
+  // Helper function to convert UTC timestamp to selected timezone
+  const convertToSelectedTimezone = useCallback((utcTimestamp: string) => {
+    try {
+      const utcDate = new Date(utcTimestamp);
+      const zonedDate = utcToZonedTime(utcDate, selectedTimezone);
+      return zonedDate.toLocaleString('en-US', {
+        timeZone: selectedTimezone,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    } catch (error) {
+      console.error('Error converting timezone:', error);
+      return utcTimestamp;
+    }
+  }, [selectedTimezone]);
 
   // Fetch data from Express server
   const fetchStockData = useCallback(async () => {
@@ -74,17 +104,27 @@ const AgGridExample: React.FC = () => {
         params: {
           count: 50,
           sortBy: 'symbol',
-          order: 'asc'
+          order: 'asc',
+          timezone: selectedTimezone // Pass selected timezone to server
         }
       });
       
       if (response.data && response.data.data) {
-        setStockData(response.data.data);
-        console.log('Stock data loaded from server:', response.data.data.length, 'records');
+        // Enhance data with timezone conversions
+        const enhancedData = response.data.data.map((stock: any) => ({
+          ...stock,
+          lastUpdatedLocal: convertToSelectedTimezone(stock.lastUpdated),
+          marketCloseLocal: convertToSelectedTimezone(stock.marketCloseTime),
+          timezoneDemo: `UTC → ${selectedTimezone}`
+        }));
+        
+        setStockData(enhancedData);
+        console.log('Stock data loaded from server:', enhancedData.length, 'records');
         console.log('Server response metadata:', {
           total: response.data.total,
           timestamp: response.data.timestamp,
           timezone: response.data.timezone,
+          selectedTimezone: selectedTimezone
         });
       } else {
         throw new Error('Invalid response format from server');
@@ -97,12 +137,28 @@ const AgGridExample: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedTimezone, convertToSelectedTimezone]);
 
-  // Load data on component mount
+  // Load data on component mount and when timezone changes
   useEffect(() => {
     fetchStockData();
   }, [fetchStockData]);
+
+  // Timezone conversion demo function
+  const demonstrateTimezoneConversion = useCallback(() => {
+    const now = new Date();
+    const utcTime = now.toISOString();
+    const zonedTime = utcToZonedTime(now, selectedTimezone);
+    const backToUtc = zonedTimeToUtc(zonedTime, selectedTimezone);
+    
+    console.log('🌍 Timezone Conversion Demo:');
+    console.log('Original UTC time:', utcTime);
+    console.log(`Converted to ${selectedTimezone}:`, zonedTime.toISOString());
+    console.log('Converted back to UTC:', backToUtc.toISOString());
+    console.log('Times match:', utcTime === backToUtc.toISOString());
+    
+    alert(`Timezone Conversion Demo:\n\nOriginal UTC: ${utcTime}\nIn ${selectedTimezone}: ${zonedTime.toLocaleString()}\nBack to UTC: ${backToUtc.toISOString()}\n\nCheck console for details!`);
+  }, [selectedTimezone]);
 
   // Column definitions for financial data
   const columnDefs: ColDef[] = [
@@ -166,6 +222,27 @@ const AgGridExample: React.FC = () => {
       width: 130,
       type: 'numericColumn',
       valueFormatter: (params) => (params.value / 1000000).toFixed(1) + 'M'
+    },
+    { 
+      field: 'lastUpdatedLocal', 
+      headerName: 'Last Updated (Local)',
+      width: 200,
+      cellStyle: { fontSize: '12px', color: '#666' },
+      headerTooltip: 'Last updated time converted to selected timezone'
+    },
+    { 
+      field: 'marketCloseLocal', 
+      headerName: 'Market Close (Local)',
+      width: 200,
+      cellStyle: { fontSize: '12px', color: '#666' },
+      headerTooltip: 'Market close time converted to selected timezone'
+    },
+    { 
+      field: 'timezoneDemo', 
+      headerName: 'Timezone Conversion',
+      width: 180,
+      cellStyle: { fontSize: '12px', color: '#1976d2', fontWeight: 'bold' },
+      headerTooltip: 'Shows the timezone conversion being applied'
     }
   ];
 
@@ -353,7 +430,7 @@ const AgGridExample: React.FC = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1800px', margin: '0 auto' }}>
       <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ color: '#1976d2', marginBottom: '10px' }}>Financial Dashboard - AG Grid Legacy APIs Demo</h2>
+        <h2 style={{ color: '#1976d2', marginBottom: '10px' }}>Financial Dashboard - AG Grid with Timezone Conversion Demo</h2>
        
         
         {/* Loading and Error States */}
@@ -456,6 +533,42 @@ const AgGridExample: React.FC = () => {
           }}
         >
           Refresh Data
+        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <label style={{ fontSize: '14px', color: '#666' }}>Timezone:</label>
+          <select
+            value={selectedTimezone}
+            onChange={(e) => setSelectedTimezone(e.target.value)}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              fontSize: '14px',
+              backgroundColor: 'white'
+            }}
+          >
+            {timezones.map(tz => (
+              <option key={tz.value} value={tz.value}>
+                {tz.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button 
+          onClick={demonstrateTimezoneConversion}
+          style={{ 
+            padding: '8px 16px',
+            backgroundColor: '#2196f3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          🌍 Demo Timezone Conversion
         </button>
 
         <button 
