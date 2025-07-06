@@ -15,8 +15,8 @@ const UserSchema = z.object({
   email: z.string().email(),
   age: z.preprocess(
     (val) => {
-      // Convert empty string or undefined to undefined, otherwise parse as number
-      if (val === '' || val === undefined || val === null) return undefined;
+      // Convert empty string, undefined, or 0 to undefined, otherwise parse as number
+      if (val === '' || val === undefined || val === null || val === 0) return undefined;
       const num = Number(val);
       return isNaN(num) ? val : num;
     },
@@ -153,7 +153,7 @@ const ZodFormikIntegration: React.FC = () => {
 
       <div style={getFormStyle()} data-testid="form-container">
         <Formik
-          initialValues={{ name: '', email: '', age: undefined as any, phone: '', tags: [''] }}
+          initialValues={{ name: '', email: '', age: 0, phone: '', tags: [''] }}
           validate={validateForm}
           onSubmit={(values, { setSubmitting }) => {
             const tags = values.tags.filter(t => t.trim());
