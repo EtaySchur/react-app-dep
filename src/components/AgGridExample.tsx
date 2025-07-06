@@ -250,12 +250,6 @@ const AgGridExample: React.FC = () => {
   const onGridReady = useCallback((params: GridReadyEvent) => {
     setGridApi(params.api);
     setColumnApi(params.columnApi);
-    
-    console.log('🎯 Grid is ready! API available.');
-    
-    // Don't call range selection immediately - let user click buttons
-    console.log('🎯 Grid ready - range selection buttons are now active');
-    
   }, []);
 
   const onRangeSelectionChanged = useCallback((event: RangeSelectionChangedEvent) => {

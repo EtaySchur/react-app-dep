@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { z } from 'zod';
 import { 
@@ -125,6 +125,14 @@ const ZodFormikIntegration: React.FC = () => {
 
   const arrayDefInfo = createZodArrayDefExample();
 
+  // Clear success message after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => setSuccessMessage(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
   return (
     <div style={{ padding: '20px', maxWidth: '600px' }} data-testid="zod-formik-container">
       <div style={{ marginBottom: '20px' }}>
@@ -145,7 +153,7 @@ const ZodFormikIntegration: React.FC = () => {
 
       <div style={getFormStyle()} data-testid="form-container">
         <Formik
-          initialValues={{ name: '', email: '', age: undefined, phone: '', tags: [''] }}
+          initialValues={{ name: '', email: '', age: undefined as any, phone: '', tags: [''] }}
           validate={validateForm}
           onSubmit={(values, { setSubmitting }) => {
             const tags = values.tags.filter(t => t.trim());
@@ -157,8 +165,7 @@ const ZodFormikIntegration: React.FC = () => {
               setSuccessMessage(`❌ Form submitted with ${errorMapMode} error mapping! Tags validation: Invalid - ${validation.errors.join(', ')}`);
             }
             
-            // Clear success message after 5 seconds
-            setTimeout(() => setSuccessMessage(''), 5000);
+            // Success message will be cleared by useEffect
             
             // Re-enable the submit button
             setSubmitting(false);

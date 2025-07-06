@@ -40,19 +40,8 @@ test.describe('Zod Formik Integration', () => {
     // Wait a moment for validation to complete
     await page.waitForTimeout(500);
 
-    // Debug: Log what's actually on the page
     const pageContent = await page.content();
-    console.log('DEFAULT - Page contains error text:', pageContent.includes('String must contain'));
     
-    // Check if any error divs exist
-    const errorDivs = await page.locator('div[style*="color: red"]').all();
-    console.log('DEFAULT - Number of error divs found:', errorDivs.length);
-    
-    for (let i = 0; i < errorDivs.length; i++) {
-      const text = await errorDivs[i].textContent();
-      console.log(`DEFAULT - Error div ${i}:`, text);
-    }
-
     // Check for validation errors
     await expect(page.getByTestId('name-error')).toContainText('String must contain at least 2 character(s)');
     await expect(page.getByTestId('email-error')).toContainText('Invalid email');
