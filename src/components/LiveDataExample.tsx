@@ -363,10 +363,6 @@ const LiveDataExample: React.FC = () => {
             <li><code>GET /api/analytics</code> - Dashboard analytics</li>
             <li><code>GET /api/health</code> - Server health check</li>
           </ul>
-          <div style={{ marginTop: '10px', fontStyle: 'italic', color: '#d32f2f' }}>
-            ⚠️ All endpoints use Express acceptParams middleware for content negotiation - 
-            this will break when Express is upgraded from 3.21.2 to 4.20.0
-          </div>
         </div>
       </div>
     </div>

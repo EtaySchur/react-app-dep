@@ -47,7 +47,6 @@ const generateFinancialData = (count = 50, timezone = 'America/New_York') => {
     const change = (Math.random() - 0.5) * 30;
     const changePercent = (change / basePrice) * 100;
     
-    // Use date-fns-tz for timezone-aware timestamps
     const utcDate = new Date();
     const zonedDate = utcToZonedTime(utcDate, timezone);
     const marketCloseTime = new Date(zonedDate);
