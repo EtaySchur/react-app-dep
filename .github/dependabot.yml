@@ -1,0 +1,48 @@
+version: 2
+updates:
+  # Enable version updates for npm - covers npm, yarn, pnpm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Allow updates for ALL dependencies (direct and indirect)
+    allow:
+      - dependency-type: "all"
+    # Group minor and patch updates together to reduce PR noise
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Prevent too many PRs at once
+    open-pull-requests-limit: 10
+    # Commit message configuration
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Labels for easy identification
+    labels:
+      - "dependencies"
+      - "automated"
+      
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    # Allow all GitHub Actions updates
+    allow:
+      - dependency-type: "all"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "automated" 
