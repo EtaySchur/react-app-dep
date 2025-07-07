@@ -41,9 +41,9 @@
   "description": "A comprehensive tool for analyzing dependency upgrades and detecting breaking changes in JavaScript/TypeScript projects. Features real-world examples of deprecated APIs and migration patterns.",
   "dependencies": {
     "ag-grid-react": "28.2.1",
-    "axios": "1.6.4",
+    "axios": "1.10.0",
     "chalk": "^4.1.0",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.14.2",
     "create-react-context": "^0.3.0",
     "date-fns-tz": "2.0.0",
     "express": "3.21.2",
@@ -55,14 +55,14 @@
     "react-query": "^3.39.3",
     "react-router-dom": "4.3.1",
     "web-vitals": "^2.1.4",
-    "zod": "3.17.5"
+    "zod": "3.25.75"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.26.9",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
-    "@playwright/test": "^1.53.1",
+    "@playwright/test": "^1.53.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^14.6.1",
