@@ -166,19 +166,6 @@ test.describe('Zod Formik Integration', () => {
     // Wait a moment for validation to complete
     await page.waitForTimeout(500);
 
-    // Debug: Log what's actually on the page
-    const pageContent = await page.content();
-    console.log('Page contains OVERRIDE:', pageContent.includes('OVERRIDE:'));
-    
-    // Check if any error divs exist
-    const errorDivs = await page.locator('div[style*="color: red"]').all();
-    console.log('Number of error divs found:', errorDivs.length);
-    
-    for (let i = 0; i < errorDivs.length; i++) {
-      const text = await errorDivs[i].textContent();
-      console.log(`Error div ${i}:`, text);
-    }
-
     // Check for override error messages
     await expect(page.getByTestId('name-error')).toContainText('OVERRIDE:');
     await expect(page.getByTestId('email-error')).toContainText('OVERRIDE:');
