@@ -60,8 +60,8 @@ jest.mock('ag-grid-community/styles/ag-theme-alpine.css', () => ({}));
 
 // Mock date-fns-tz functions specifically for this test
 jest.mock('date-fns-tz', () => ({
-  utcToZonedTime: jest.fn((date) => new Date(date)),
-  zonedTimeToUtc: jest.fn((date) => new Date(date)),
+  toZonedTime: jest.fn((date) => new Date(date)),
+  fromZonedTime: jest.fn((date) => new Date(date)),
 }));
 
 import AgGridExample from '../AgGridExample';
