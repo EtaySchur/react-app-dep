@@ -9,7 +9,7 @@ import {
   CellClickedEvent,
   RangeSelectionChangedEvent,
 } from 'ag-grid-community';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -77,7 +77,7 @@ const AgGridExample: React.FC = () => {
   const convertToSelectedTimezone = useCallback((utcTimestamp: string) => {
     try {
       const utcDate = new Date(utcTimestamp);
-      const zonedDate = utcToZonedTime(utcDate, selectedTimezone);
+      const zonedDate = toZonedTime(utcDate, selectedTimezone);
       return zonedDate.toLocaleString('en-US', {
         timeZone: selectedTimezone,
         year: 'numeric',
@@ -148,8 +148,8 @@ const AgGridExample: React.FC = () => {
   const demonstrateTimezoneConversion = useCallback(() => {
     const now = new Date();
     const utcTime = now.toISOString();
-    const zonedTime = utcToZonedTime(now, selectedTimezone);
-    const backToUtc = zonedTimeToUtc(zonedTime, selectedTimezone);
+    const zonedTime = toZonedTime(now, selectedTimezone);
+    const backToUtc = fromZonedTime(zonedTime, selectedTimezone);
     
     console.log('🌍 Timezone Conversion Demo:');
     console.log('Original UTC time:', utcTime);
