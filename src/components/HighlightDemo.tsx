@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import HighlightComponent from './HighlightComponent';
+import HighlightAPIs from './HighlightAPIs';
+import LanguageRegistrationAPIs from './LanguageRegistrationAPIs';
 
-const HighlightDemo: React.FC = () => {
+const HighlightAPIDemo: React.FC = () => {
   const [code, setCode] = useState(`function fibonacci(n) {
   if (n <= 1) return n;
   return fibonacci(n - 1) + fibonacci(n - 2);
@@ -32,6 +33,7 @@ class Calculator {
 
   const [selectedLanguage, setSelectedLanguage] = useState('javascript');
   const [autoDetect, setAutoDetect] = useState(false);
+  const [activeTab, setActiveTab] = useState('highlight');
 
   const sampleCodes = {
     javascript: `function fibonacci(n) {
@@ -73,96 +75,123 @@ int main() {
 
   return (
     <div className="highlight-demo">
-      <h2>Highlight.js Legacy API Demo</h2>
+      <h2>Highlight.js Demo</h2>
       
-      <div className="controls">
-        <div className="control-group">
-          <label htmlFor="language-select">Language:</label>
-          <select 
-            id="language-select"
-            value={selectedLanguage} 
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            disabled={autoDetect}
-          >
-            <option value="javascript">JavaScript</option>
-            <option value="python">Python</option>
-            <option value="java">Java</option>
-            <option value="cpp">C++</option>
-            <option value="typescript">TypeScript</option>
-          </select>
-        </div>
-        
-        <div className="control-group">
-          <label htmlFor="auto-detect">
-            <input 
-              id="auto-detect"
-              type="checkbox" 
-              checked={autoDetect} 
-              onChange={(e) => setAutoDetect(e.target.checked)}
+      <div className="tab-navigation">
+        <button 
+          className={activeTab === 'highlight' ? 'active' : ''}
+          onClick={() => setActiveTab('highlight')}
+        >
+          Highlighting
+        </button>
+        <button 
+          className={activeTab === 'registration' ? 'active' : ''}
+          onClick={() => setActiveTab('registration')}
+        >
+          Language Registration
+        </button>
+      </div>
+
+      {activeTab === 'highlight' && (
+        <div className="highlight-section">
+          <div className="controls">
+            <div className="control-group">
+              <label htmlFor="language-select">Language:</label>
+              <select 
+                id="language-select"
+                value={selectedLanguage} 
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                disabled={autoDetect}
+              >
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+                <option value="typescript">TypeScript</option>
+              </select>
+            </div>
+            
+            <div className="control-group">
+              <label htmlFor="auto-detect">
+                <input 
+                  id="auto-detect"
+                  type="checkbox" 
+                  checked={autoDetect} 
+                  onChange={(e) => setAutoDetect(e.target.checked)}
+                />
+                Auto-detect language
+              </label>
+            </div>
+          </div>
+
+          <div className="sample-codes">
+            <h3>Sample Codes:</h3>
+            <div className="sample-buttons">
+              {Object.entries(sampleCodes).map(([lang, sampleCode]) => (
+                <button 
+                  key={lang}
+                  onClick={() => {
+                    setCode(sampleCode);
+                    if (!autoDetect) {
+                      setSelectedLanguage(lang);
+                    }
+                  }}
+                >
+                  Load {lang} sample
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="code-input">
+            <h3>Code Input:</h3>
+            <textarea 
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              rows={15}
+              cols={80}
+              placeholder="Enter your code here..."
             />
-            Auto-detect language
-          </label>
+          </div>
+
+          <div className="highlight-output">
+            <h3>Highlighted Output:</h3>
+            <HighlightAPIs 
+              code={code}
+              language={selectedLanguage}
+              autoDetect={autoDetect}
+            />
+          </div>
+
+          <div className="api-usage">
+            <h3>API Functions:</h3>
+            <ul>
+              <li><code>hljs.configure()</code> - Configure highlight.js options</li>
+              <li><code>hljs.highlight()</code> - Highlight code with specific language</li>
+              <li><code>hljs.highlightAuto()</code> - Auto-detect and highlight</li>
+              <li><code>hljs.fixMarkup()</code> - Fix markup issues</li>
+              <li><code>hljs.highlightBlock()</code> - Highlight DOM element</li>
+              <li><code>hljs.getLanguage()</code> - Get language definition</li>
+              <li><code>hljs.listLanguages()</code> - List available languages</li>
+              <li><code>hljs.initHighlighting()</code> - Initialize highlighting</li>
+              <li><code>hljs.inherit()</code> - Inherit mode properties</li>
+              <li><code>hljs.COMMENT()</code> - Create comment modes</li>
+              <li>Mode constants: <code>QUOTE_STRING_MODE</code>, <code>BACKSLASH_ESCAPE</code>, etc.</li>
+              <li>Regex constants: <code>C_NUMBER_RE</code>, <code>BINARY_NUMBER_RE</code>, etc.</li>
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="sample-codes">
-        <h3>Sample Codes:</h3>
-        <div className="sample-buttons">
-          {Object.entries(sampleCodes).map(([lang, sampleCode]) => (
-            <button 
-              key={lang}
-              onClick={() => {
-                setCode(sampleCode);
-                if (!autoDetect) {
-                  setSelectedLanguage(lang);
-                }
-              }}
-            >
-              Load {lang} sample
-            </button>
-          ))}
+      {activeTab === 'registration' && (
+        <div className="registration-section">
+          <LanguageRegistrationAPIs />
         </div>
-      </div>
+      )}
 
-      <div className="code-input">
-        <h3>Code Input:</h3>
-        <textarea 
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          rows={15}
-          cols={80}
-          placeholder="Enter your code here..."
-        />
-      </div>
 
-      <div className="highlight-output">
-        <h3>Highlighted Output:</h3>
-        <HighlightComponent 
-          code={code}
-          language={selectedLanguage}
-          autoDetect={autoDetect}
-        />
-      </div>
-
-      <div className="api-usage">
-        <h3>Legacy APIs Used:</h3>
-        <ul>
-          <li><code>hljs.configure()</code> - Configure highlight.js options</li>
-          <li><code>hljs.highlight()</code> - Highlight code with specific language</li>
-          <li><code>hljs.highlightAuto()</code> - Auto-detect and highlight</li>
-          <li><code>hljs.fixMarkup()</code> - Fix markup issues</li>
-          <li><code>hljs.highlightBlock()</code> - Highlight DOM element</li>
-          <li><code>hljs.getLanguage()</code> - Get language definition</li>
-          <li><code>hljs.listLanguages()</code> - List available languages</li>
-          <li><code>hljs.initHighlighting()</code> - Initialize highlighting</li>
-          <li><code>hljs.inherit()</code> - Inherit mode properties</li>
-          <li><code>hljs.COMMENT()</code> - Create comment modes</li>
-          <li>Mode constants: <code>QUOTE_STRING_MODE</code>, <code>BACKSLASH_ESCAPE</code>, etc.</li>
-          <li>Regex constants: <code>C_NUMBER_RE</code>, <code>BINARY_NUMBER_RE</code>, etc.</li>
-        </ul>
-      </div>
     </div>
   );
 };
 
-export default HighlightDemo; 
+export default HighlightAPIDemo; 

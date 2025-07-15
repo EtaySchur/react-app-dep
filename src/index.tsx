@@ -14,6 +14,7 @@ import StaticContextExample from './components/StaticContextExample';
 import RoutesExample from './components/RoutesExample';
 import HighlightDemo from './components/HighlightDemo';
 import LanguageRegistration from './components/LanguageRegistration';
+import HighlightAPIDemo from './components/HighlightDemo';
 import AgGridExample from './components/AgGridExample';
 import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
 import LiveDataExample from './components/LiveDataExample';
@@ -39,6 +40,7 @@ const Navigation = () => (
       <li><Link to="/ag-grid">AG-Grid Breaking Changes</Link></li>
       <li><Link to="/react-hook-form">React Hook Form + Class Validator</Link></li>
       <li><Link to="/live-data">Live Express API Data</Link></li>
+      <li><Link to="/legacy-highlight">Highlight.js Legacy APIs</Link></li>
       {/* <li><Link to="/comparison">API Comparison</Link></li> */}
       <li><Link to="/react-query">React Query</Link></li>
       {/* <li><Link to="/zod">Zod</Link></li> */}
@@ -109,6 +111,7 @@ const App = () => {
           <Route path="/ag-grid" component={AgGridExample} />
           <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
           <Route path="/live-data" component={LiveDataExample} />
+          <Route path="/legacy-highlight" component={HighlightAPIDemo} />
           
           {/* Protected route example (v4.3.1 feature) */}
           <ProtectedRoute 
