@@ -3,7 +3,6 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 import { 
   GridApi, 
-  ColumnApi,
   GridReadyEvent,
   ColDef,
   CellClickedEvent,
@@ -54,7 +53,7 @@ const generateFinancialData = () => {
 const AgGridExample: React.FC = () => {
   const gridRef = useRef<AgGridReact>(null);
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
-  const [columnApi, setColumnApi] = useState<ColumnApi | null>(null);
+  const [columnApi, setColumnApi] = useState<any>(null);
   const [stockData, setStockData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,7 +167,7 @@ const AgGridExample: React.FC = () => {
       headerCheckboxSelection: true,
       width: 50,
       pinned: 'left',
-      suppressMenu: true,
+      suppressHeaderMenuButton: true,
       sortable: false,
       filter: false
     },
@@ -249,7 +248,7 @@ const AgGridExample: React.FC = () => {
   // Grid event handlers
   const onGridReady = useCallback((params: GridReadyEvent) => {
     setGridApi(params.api);
-    setColumnApi(params.columnApi);
+    setColumnApi(params.api);
   }, []);
 
   const onRangeSelectionChanged = useCallback((event: RangeSelectionChangedEvent) => {
@@ -297,7 +296,7 @@ const AgGridExample: React.FC = () => {
       
       // Calculate the selection details for the stats
       const numRows = endRow - startRow + 1;
-      const allColumns = columnApi.getAllColumns();
+      const allColumns = columnApi.getColumns();
       console.log('🔍 All columns:', allColumns);
       
       if (!allColumns) {
@@ -306,8 +305,8 @@ const AgGridExample: React.FC = () => {
         return;
       }
       
-      const startColIndex = allColumns.findIndex(col => col.getColId() === startCol);
-      const endColIndex = allColumns.findIndex(col => col.getColId() === endCol);
+      const startColIndex = allColumns.findIndex((col: any) => col.getColId() === startCol);
+      const endColIndex = allColumns.findIndex((col: any) => col.getColId() === endCol);
       const numCols = endColIndex - startColIndex + 1;
       const totalCells = numRows * numCols;
       
@@ -409,14 +408,14 @@ const AgGridExample: React.FC = () => {
     }
     
     if (isCompanyColumnVisible) {
-      console.log('Hiding company column using hideColumn API');
-      // Use the hideColumn method
-      columnApi.hideColumn('companyName', true);
+      console.log('Hiding company column using setColumnVisible API');
+      // Use the setColumnVisible method
+      columnApi.setColumnVisible('companyName', false);
       setIsCompanyColumnVisible(false);
     } else {
-      console.log('Showing company column using hideColumn API');
-      // Use hideColumn with false to show the column
-      columnApi.hideColumn('companyName', false);
+      console.log('Showing company column using setColumnVisible API');
+      // Use setColumnVisible with true to show the column
+      columnApi.setColumnVisible('companyName', true);
       setIsCompanyColumnVisible(true);
     }
   }, [columnApi, isCompanyColumnVisible]);
