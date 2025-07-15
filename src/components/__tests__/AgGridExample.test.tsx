@@ -16,10 +16,7 @@ const mockGridApi = {
   sizeColumnsToFit: jest.fn(),
   getSelectedRows: jest.fn(),
   selectAll: jest.fn(),
-};
-
-const mockColumnApi = {
-  getAllColumns: jest.fn().mockReturnValue([
+  getColumns: jest.fn().mockReturnValue([
     { getColId: () => 'symbol' },
     { getColId: () => 'companyName' },
     { getColId: () => 'price' },
@@ -27,8 +24,9 @@ const mockColumnApi = {
     { getColId: () => 'changePercent' },
     { getColId: () => 'volume' },
   ]),
-  hideColumn: jest.fn(),
+  setColumnsVisible: jest.fn(),
 };
+
 
 jest.mock('ag-grid-react', () => ({
   AgGridReact: React.forwardRef(({ onGridReady, rowData, columnDefs, className, style, ...props }: any, ref: any) => {
@@ -36,7 +34,6 @@ jest.mock('ag-grid-react', () => ({
       if (onGridReady) {
         onGridReady({
           api: mockGridApi,
-          columnApi: mockColumnApi,
         });
       }
     }, [onGridReady]);
@@ -131,7 +128,8 @@ describe('AgGridExample', () => {
     mockGridApi.sizeColumnsToFit.mockClear();
     mockGridApi.getSelectedRows.mockClear();
     mockGridApi.selectAll.mockClear();
-    mockColumnApi.hideColumn.mockClear();
+    mockGridApi.setColumnsVisible.mockClear();
+    mockGridApi.getColumns.mockClear();
   });
 
   it('renders financial dashboard title', async () => {
@@ -299,7 +297,7 @@ describe('AgGridExample', () => {
     
     await userEvent.click(toggleButton);
     
-    expect(mockColumnApi.hideColumn).toHaveBeenCalled();
+    expect(mockGridApi.setColumnsVisible).toHaveBeenCalled();
   });
 
   it('handles different timezone options', async () => {
