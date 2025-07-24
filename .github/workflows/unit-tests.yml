@@ -38,12 +38,14 @@ jobs:
         
     - name: Install dependencies
       run: |
+        echo "=== Clearing npm cache ==="
+        npm cache clean --force
         echo "=== npm config before install ==="
         npm config list
         echo "=== .npmrc contents before install ==="
         cat .npmrc
         echo "=== Starting npm install ==="
-        npm install --verbose
+        npm install --verbose --no-cache
 
     - name: Run unit tests
       run: npm test
