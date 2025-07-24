@@ -21,14 +21,19 @@ jobs:
         node-version: '20'
         cache: 'npm'
 
+    - name: Test without authentication
+      run: |
+        echo "=== Testing package access without auth ==="
+        npm view @backline.js/alert-panel || echo "Package not accessible"
+        
     - name: Configure npm authentication
       run: |
-        echo "//registry.npmjs.org/:_auth=$(echo -n ${{ secrets.NPM_TOKEN }} | base64)" > .npmrc
+        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
         echo "registry=https://registry.npmjs.org/" >> .npmrc
         echo "always-auth=true" >> .npmrc
         echo "=== .npmrc contents ==="
         cat .npmrc
-        echo "=== Testing package access ==="
+        echo "=== Testing package access with auth ==="
         npm view @backline.js/alert-panel || echo "Package not accessible"
         
     - name: Install dependencies
