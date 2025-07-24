@@ -27,17 +27,8 @@ jobs:
         echo "registry=https://registry.npmjs.org/" >> .npmrc
         echo "always-auth=true" >> .npmrc
         
-    - name: Debug npm configuration
-      run: |
-        echo "=== .npmrc contents ==="
-        cat .npmrc
-        echo "=== npm config ==="
-        npm config list
-        echo "=== Testing package access ==="
-        npm view @backline.js/alert-panel || echo "Package not accessible"
-        
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Run unit tests
       run: npm test
