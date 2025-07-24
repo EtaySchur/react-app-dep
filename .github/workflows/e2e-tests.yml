@@ -20,19 +20,12 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@backline.js'
+        token: ${{ secrets.NPM_TOKEN }}
 
-    - name: Debug Node.js and npm versions
-      run: |
-        echo "Node.js version: $(node --version)"
-        echo "npm version: $(npm --version)"
-        echo "npm config list:"
-        npm config list
-        
     - name: Install dependencies
       run: npm install
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
