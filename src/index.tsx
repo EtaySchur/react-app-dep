@@ -12,9 +12,10 @@ import ActionExample from './components/ActionExample';
 import ChildrenExample from './components/ChildrenExample';
 import StaticContextExample from './components/StaticContextExample';
 import RoutesExample from './components/RoutesExample';
-import HighlightDemo from './components/HighlightDemo';
-import LanguageRegistration from './components/LanguageRegistration';
-import HighlightAPIDemo from './components/HighlightDemo';
+// import HighlightDemo from './components/HighlightDemo';
+// import LanguageRegistration from './components/LanguageRegistration';
+// import HighlightAPIDemo from './components/HighlightDemo';
+import SimpleHighlightDemo from './components/SimpleHighlightDemo';
 import AgGridExample from './components/AgGridExample';
 import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
 import LiveDataExample from './components/LiveDataExample';
@@ -41,7 +42,8 @@ const Navigation = () => (
       <li><Link to="/ag-grid">AG-Grid Breaking Changes</Link></li>
       <li><Link to="/react-hook-form">React Hook Form + Class Validator</Link></li>
       <li><Link to="/live-data">Live Express API Data</Link></li>
-      <li><Link to="/legacy-highlight">Highlight.js Legacy APIs</Link></li>
+      {/* <li><Link to="/legacy-highlight">Highlight.js Legacy APIs</Link></li> */}
+      <li><Link to="/simple-highlight">Simple Highlight Demo</Link></li>
       <li><Link to="/alert-panel">Alert Panel Demo</Link></li>
       {/* <li><Link to="/comparison">API Comparison</Link></li> */}
       <li><Link to="/react-query">React Query</Link></li>
@@ -103,21 +105,16 @@ const App = () => {
           <Route path="/query" component={QueryExampleWrapper} />
           <Route path="/formik" component={FormikComplexFormWrapper} />
           <Route path="/zod-formik" component={ZodFormikIntegration} />
-          {/* <Route path="/params/:name" component={ParameterExample} />
-          <Route path="/action" component={ActionExample} /> */}
-          {/* <Route path="/children" component={ChildrenExample} /> */}
-          {/* <Route path="/static-context" component={StaticContextExample} /> */}
-          {/* <Route path="/routes" component={RoutesExample} /> */}
           {/* <Route path="/highlight" component={HighlightDemo} /> */}
-          {/* <Route path="/language-registration" component={LanguageRegistration} /> */}
           <Route path="/ag-grid" component={AgGridExample} />
           <Route path="/react-hook-form" component={ReactHookFormClassValidatorExample} />
           <Route path="/live-data" component={LiveDataExample} />
-          <Route path="/legacy-highlight" component={HighlightAPIDemo} />
+          {/* <Route path="/legacy-highlight" component={HighlightAPIDemo} /> */}
+          <Route path="/simple-highlight" component={SimpleHighlightDemo} />
           <Route path="/alert-panel" component={AlertPanelExample} />
           
           {/* Protected route example (v4.3.1 feature) */}
-          <ProtectedRoute 
+          <ProtectedRoute  
             path="/protected" 
             component={FormikComplexFormWrapper} 
             isAuthenticated={isAuthenticated} 
