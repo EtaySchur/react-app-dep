@@ -21,10 +21,17 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
+    - name: Debug Node.js and npm versions
+      run: |
+        echo "Node.js version: $(node --version)"
+        echo "npm version: $(npm --version)"
+        echo "npm config list:"
+        npm config list
+        
     - name: Configure npm authentication
       run: |
-        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        npm config set _auth ${{ secrets.NPM_TOKEN }}
+        npm config set registry https://registry.npmjs.org/
         
     - name: Install dependencies
       run: npm install
