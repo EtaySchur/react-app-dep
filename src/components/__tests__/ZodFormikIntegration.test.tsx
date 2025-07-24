@@ -10,6 +10,7 @@ describe('ZodFormikIntegration - Simple Form', () => {
     expect(screen.getByText('Simple Formik + Zod Example')).toBeInTheDocument();
     expect(screen.getByLabelText('Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
+    expect(screen.getByLabelText('Address')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Submit' })).toBeInTheDocument();
   });
 
@@ -21,6 +22,7 @@ describe('ZodFormikIntegration - Simple Form', () => {
     await waitFor(() => {
       expect(screen.getByText('Name must be at least 2 characters')).toBeInTheDocument();
       expect(screen.getByText('Invalid email address')).toBeInTheDocument();
+      expect(screen.getByText('Address must be at least 5 characters long')).toBeInTheDocument();
     });
   });
 
@@ -48,15 +50,34 @@ describe('ZodFormikIntegration - Simple Form', () => {
     });
   });
 
+  it('validates address minimum length', async () => {
+    render(<ZodFormikIntegration />);
+    
+    const nameInput = screen.getByLabelText('Name');
+    const emailInput = screen.getByLabelText('Email');
+    const addressInput = screen.getByLabelText('Address');
+    
+    await userEvent.type(nameInput, 'John Doe');
+    await userEvent.type(emailInput, 'john@example.com');
+    await userEvent.type(addressInput, '123'); // Less than 5 characters
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Address must be at least 5 characters long')).toBeInTheDocument();
+    });
+  });
+
   it('submits valid form successfully', async () => {
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
     render(<ZodFormikIntegration />);
     
     const nameInput = screen.getByLabelText('Name');
     const emailInput = screen.getByLabelText('Email');
+    const addressInput = screen.getByLabelText('Address');
     
     await userEvent.type(nameInput, 'John Doe');
     await userEvent.type(emailInput, 'john@example.com');
+    await userEvent.type(addressInput, '123 Main Street');
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     
     await waitFor(() => {
@@ -65,6 +86,9 @@ describe('ZodFormikIntegration - Simple Form', () => {
       );
       expect(alertMock).toHaveBeenCalledWith(
         expect.stringContaining('"email": "john@example.com"')
+      );
+      expect(alertMock).toHaveBeenCalledWith(
+        expect.stringContaining('"address": "123 Main Street"')
       );
     });
     
@@ -77,14 +101,17 @@ describe('ZodFormikIntegration - Simple Form', () => {
     
     const nameInput = screen.getByLabelText('Name');
     const emailInput = screen.getByLabelText('Email');
+    const addressInput = screen.getByLabelText('Address');
     
     await userEvent.type(nameInput, 'John Doe');
     await userEvent.type(emailInput, 'john@example.com');
+    await userEvent.type(addressInput, '123 Main Street');
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     
     await waitFor(() => {
       expect(nameInput).toHaveValue('');
       expect(emailInput).toHaveValue('');
+      expect(addressInput).toHaveValue('');
     });
     
     alertMock.mockRestore();
@@ -95,11 +122,14 @@ describe('ZodFormikIntegration - Simple Form', () => {
     
     const nameInput = screen.getByLabelText('Name');
     const emailInput = screen.getByLabelText('Email');
+    const addressInput = screen.getByLabelText('Address');
     
     await userEvent.type(nameInput, 'John');
     await userEvent.type(emailInput, 'john@example.com');
+    await userEvent.type(addressInput, '123 Main Street');
     
     expect(nameInput).toHaveValue('John');
     expect(emailInput).toHaveValue('john@example.com');
+    expect(addressInput).toHaveValue('123 Main Street');
   });
 }); 
