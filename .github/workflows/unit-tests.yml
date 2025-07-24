@@ -18,7 +18,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Debug Node.js and npm versions
@@ -30,7 +30,7 @@ jobs:
         
     - name: Configure npm authentication
       run: |
-        npm config set _auth ${{ secrets.NPM_TOKEN }}
+        npm config set //registry.npmjs.org/:_auth ${{ secrets.NPM_TOKEN }}
         npm config set registry https://registry.npmjs.org/
         
     - name: Install dependencies
