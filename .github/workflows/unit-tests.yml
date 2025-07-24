@@ -28,13 +28,11 @@ jobs:
         echo "npm config list:"
         npm config list
         
-    - name: Configure npm authentication
-      run: |
-        npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-        npm config set registry https://registry.npmjs.org/
-        
     - name: Install dependencies
       run: npm install
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
 
     - name: Run unit tests
       run: npm test
