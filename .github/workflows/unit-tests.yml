@@ -18,34 +18,17 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '18'
         cache: 'npm'
 
-    - name: Test without authentication
-      run: |
-        echo "=== Testing package access without auth ==="
-        npm view @backline.js/alert-panel || echo "Package not accessible"
-        
     - name: Configure npm authentication
       run: |
         echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
         echo "registry=https://registry.npmjs.org/" >> .npmrc
         echo "always-auth=true" >> .npmrc
-        echo "=== .npmrc contents ==="
-        cat .npmrc
-        echo "=== Testing package access with auth ==="
-        npm view @backline.js/alert-panel || echo "Package not accessible"
         
     - name: Install dependencies
-      run: |
-        echo "=== Clearing npm cache ==="
-        npm cache clean --force
-        echo "=== npm config before install ==="
-        npm config list
-        echo "=== .npmrc contents before install ==="
-        cat .npmrc
-        echo "=== Starting npm install ==="
-        npm install --verbose --no-cache
+      run: npm install
 
     - name: Run unit tests
       run: npm test
