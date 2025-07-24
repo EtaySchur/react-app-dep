@@ -43,6 +43,7 @@ module.exports = {
     historyApiFallback: true
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    mainFields: ['main', 'module']
   }
 }; 
