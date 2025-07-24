@@ -21,30 +21,8 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: Configure npm for private packages
-      run: |
-        # Clear any existing npm configuration
-        npm config delete registry
-        npm config delete _authToken
-        
-        # Create .npmrc file with authentication token
-        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
-        echo "registry=https://registry.npmjs.org/" >> .npmrc
-        echo "always-auth=true" >> .npmrc
-        echo "auth-type=legacy" >> .npmrc
-        
-        # Verify .npmrc was created (without showing token)
-        echo "Created .npmrc file:"
-        cat .npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/'
-        
-        # Show npm config to verify
-        echo "NPM config:"
-        npm config list
-
     - name: Install dependencies
-      run: |
-        # Try npm ci with explicit registry and auth
-        npm ci --registry=https://registry.npmjs.org/ --auth-type=legacy
+      run: npm ci --//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
