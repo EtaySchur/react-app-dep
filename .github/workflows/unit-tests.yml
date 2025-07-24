@@ -37,7 +37,13 @@ jobs:
         npm view @backline.js/alert-panel || echo "Package not accessible"
         
     - name: Install dependencies
-      run: npm install
+      run: |
+        echo "=== npm config before install ==="
+        npm config list
+        echo "=== .npmrc contents before install ==="
+        cat .npmrc
+        echo "=== Starting npm install ==="
+        npm install --verbose
 
     - name: Run unit tests
       run: npm test
