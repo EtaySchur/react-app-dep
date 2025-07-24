@@ -20,9 +20,15 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        registry-url: 'https://registry.npmjs.org'
-        scope: '@backline.js'
-        token: ${{ secrets.NPM_TOKEN }}
+
+    - name: Configure npm authentication
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+        echo "registry=https://registry.npmjs.org/" >> .npmrc
+        echo "always-auth=true" >> .npmrc
+        
+    - name: Login to npm
+      run: npm login --auth-type=legacy --registry=https://registry.npmjs.org/ --auth-token=${{ secrets.NPM_TOKEN }}
         
     - name: Install dependencies
       run: npm install
