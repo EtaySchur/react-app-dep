@@ -5,11 +5,19 @@ import { z } from 'zod';
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
+  address: z.string({
+    errorMap: (issue, ctx) => {
+      if (issue.code === "too_small") {
+        return { message: `Address must be at least ${issue.minimum} characters long` };
+      }
+      return { message: ctx.defaultError };
+    }
+  }).min(5),
 });
 
 type FormValues = z.infer<typeof schema>;
 
-const initialValues: FormValues = { name: '', email: '' };
+const initialValues: FormValues = { name: '', email: '', address: '' };
 
 function validate(values: FormValues) {
   try {
@@ -55,6 +63,14 @@ const ZodFormikIntegration: React.FC = () => (
               {msg => <div style={{ color: 'red', fontSize: 12 }}>{msg}</div>}
             </ErrorMessage>
           </div>
+          <div style={{ marginBottom: 16 }}>
+            <label htmlFor="address">Address</label>
+            <Field id="address" name="address" type="text" />
+            <ErrorMessage name="address">
+              {msg => <div style={{ color: 'red', fontSize: 12 }}>{msg}</div>}
+            </ErrorMessage>
+          </div>
+
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
