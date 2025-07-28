@@ -93,7 +93,6 @@ const extendedProgress: AxiosProgressEvent = {
   event: undefined,
   lengthComputable: true
 };
-
 function simulateProgress(): Promise<AxiosProgressEvent> {
   return Promise.resolve({
     loaded: 1000,
@@ -104,8 +103,10 @@ function simulateProgress(): Promise<AxiosProgressEvent> {
     estimated: 0,
     upload: false,
     download: true,
-    event: undefined
+    event: undefined,
+    lengthComputable: true
   });
+}
 }
 
 function processEvent<T extends AxiosProgressEvent>(event: T): T {
