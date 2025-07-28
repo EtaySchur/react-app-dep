@@ -71,7 +71,8 @@ const progressHistory: AxiosProgressEvent[] = [
     estimated: undefined,
     upload: true,
     download: false,
-    event: undefined
+    event: undefined,
+    lengthComputable: true
   }
 ];
 
