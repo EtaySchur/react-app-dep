@@ -46,8 +46,7 @@ class CustomProgressEvent implements AxiosProgressEvent {
     this.lengthComputable = total !== undefined;
   }
 }
-
-function processProgress({ loaded, total, progress }: AxiosProgressEvent) {
+function processProgress({ loaded, total, progress, lengthComputable }: AxiosProgressEvent) {
   const percentage = total ? (loaded / total) * 100 : 0;
   return percentage;
 }
