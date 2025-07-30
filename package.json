@@ -42,7 +42,7 @@
   "dependencies": {
     "@backline.js/alert-panel": "^1.0.5",
     "ag-grid-react": "28.2.1",
-    "axios": "1.6.4",
+    "axios": "1.8.2",
     "chalk": "^4.1.0",
     "class-validator": "^0.13.2",
     "create-react-context": "^0.3.0",
@@ -92,5 +92,8 @@
     "webpack": "^5.99.5",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.1"
+  },
+  "directories": {
+    "test": "tests"
   }
 }
