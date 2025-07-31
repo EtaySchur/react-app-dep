@@ -19,7 +19,6 @@ import SimpleHighlightDemo from './components/SimpleHighlightDemo';
 import AgGridExample from './components/AgGridExample';
 import ReactHookFormClassValidatorExample from './components/ReactHookFormClassValidatorExample';
 import LiveDataExample from './components/LiveDataExample';
-import AlertPanelExample from './components/AlertPanelExample';
 import './styles.css';
 import 'highlight.js/styles/github.css';
 
@@ -44,7 +43,6 @@ const Navigation = () => (
       <li><Link to="/live-data">Live Express API Data</Link></li>
       {/* <li><Link to="/legacy-highlight">Highlight.js Legacy APIs</Link></li> */}
       <li><Link to="/simple-highlight">Simple Highlight Demo</Link></li>
-      <li><Link to="/alert-panel">Alert Panel Demo</Link></li>
       {/* <li><Link to="/comparison">API Comparison</Link></li> */}
       <li><Link to="/react-query">React Query</Link></li>
       {/* <li><Link to="/zod">Zod</Link></li> */}
@@ -111,7 +109,6 @@ const App = () => {
           <Route path="/live-data" component={LiveDataExample} />
           {/* <Route path="/legacy-highlight" component={HighlightAPIDemo} /> */}
           <Route path="/simple-highlight" component={SimpleHighlightDemo} />
-          <Route path="/alert-panel" component={AlertPanelExample} />
           
           {/* Protected route example (v4.3.1 feature) */}
           <ProtectedRoute  
