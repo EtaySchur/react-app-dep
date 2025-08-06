@@ -24,7 +24,8 @@ describe('api-service', () => {
         estimated: 1,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       });
     });
   });
@@ -44,7 +45,8 @@ describe('api-service', () => {
         estimated: (total - loaded) / 1000,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       });
     });
 
@@ -103,7 +105,8 @@ describe('api-service', () => {
         estimated: 0.75,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const percentage = processProgress(progressEvent);
@@ -120,7 +123,8 @@ describe('api-service', () => {
         estimated: undefined,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: false
       };
 
       const percentage = processProgress(progressEvent);
@@ -137,7 +141,8 @@ describe('api-service', () => {
         estimated: 0,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const percentage = processProgress(progressEvent);
@@ -151,7 +156,8 @@ describe('api-service', () => {
         loaded: 100,
         total: 200,
         progress: 0.5,
-        bytes: 100
+        bytes: 100,
+        lengthComputable: true
       });
     });
   });
@@ -169,7 +175,8 @@ describe('api-service', () => {
         estimated: 0.5,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       logProgress(progressEvent);
@@ -191,7 +198,8 @@ describe('api-service', () => {
         estimated: undefined,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: false
       };
 
       logProgress(progressEvent);
@@ -214,7 +222,8 @@ describe('api-service', () => {
         estimated: undefined,
         upload: true,
         download: false,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       });
     });
   });
@@ -230,7 +239,8 @@ describe('api-service', () => {
         estimated: 0.5,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       });
     });
   });
@@ -248,7 +258,8 @@ describe('api-service', () => {
         estimated: 0,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       });
     });
   });
@@ -264,7 +275,8 @@ describe('api-service', () => {
         estimated: 0.2,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const processedEvent = processEvent(originalEvent);
@@ -285,7 +297,8 @@ describe('api-service', () => {
         estimated: 0.075,
         upload: true,
         download: false,
-        event: { type: 'progress' }
+        event: { type: 'progress' },
+        lengthComputable: true
       };
 
       const processedEvent = processEvent(originalEvent);
