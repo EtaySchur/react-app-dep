@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertPanel } from '@backline.js/alert-panel';
+import { AlertPanel } from './AlertPanel';
 
 const AlertPanelExample: React.FC = () => {
   const [currentUrl, setCurrentUrl] = useState('/dashboard');

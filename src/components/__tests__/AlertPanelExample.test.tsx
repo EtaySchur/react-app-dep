@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import AlertPanelExample from '../AlertPanelExample';
 
 // Mock the AlertPanel component
-jest.mock('@backline.js/alert-panel', () => ({
+jest.mock('../AlertPanel', () => ({
   AlertPanel: ({ 
     type, 
     title, 
