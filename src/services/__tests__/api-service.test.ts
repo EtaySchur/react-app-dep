@@ -103,7 +103,8 @@ describe('api-service', () => {
         estimated: 0.75,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const percentage = processProgress(progressEvent);
@@ -120,7 +121,8 @@ describe('api-service', () => {
         estimated: undefined,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: false
       };
 
       const percentage = processProgress(progressEvent);
@@ -137,7 +139,8 @@ describe('api-service', () => {
         estimated: 0,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const percentage = processProgress(progressEvent);
@@ -169,7 +172,8 @@ describe('api-service', () => {
         estimated: 0.5,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       logProgress(progressEvent);
@@ -191,7 +195,8 @@ describe('api-service', () => {
         estimated: undefined,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: false
       };
 
       logProgress(progressEvent);
@@ -264,7 +269,8 @@ describe('api-service', () => {
         estimated: 0.2,
         upload: false,
         download: true,
-        event: undefined
+        event: undefined,
+        lengthComputable: true
       };
 
       const processedEvent = processEvent(originalEvent);
@@ -285,7 +291,8 @@ describe('api-service', () => {
         estimated: 0.075,
         upload: true,
         download: false,
-        event: { type: 'progress' }
+        event: { type: 'progress' },
+        lengthComputable: true
       };
 
       const processedEvent = processEvent(originalEvent);
